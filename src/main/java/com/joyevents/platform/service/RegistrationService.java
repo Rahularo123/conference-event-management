@@ -7,6 +7,13 @@ import com.joyevents.platform.repository.DelegateRepository;
 import com.joyevents.platform.repository.RedemptionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -111,5 +118,84 @@ public class RegistrationService {
         delegateRepository.save(delegate);
 
         return badgePdfService.generateBadgePdf(delegate);
+    }
+
+        /**
+     * 7. Bulk import delegates from an uploaded CSV spreadsheet.
+     * Expected CSV Columns: RegistrationId, FullName, Email, Mobile, Institution, Category
+     */
+    @Transactional
+    public Map<String, Object> importDelegatesFromCsv(String conferenceCode, MultipartFile file) {
+        Conference conference = conferenceRepository.findByCode(conferenceCode)
+                .orElseThrow(() -> new IllegalArgumentException("Conference not found: " + conferenceCode));
+
+        int importedCount = 0;
+        int skippedCount = 0;
+        List<Delegate> toSave = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                // Skip header row if it contains column titles
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    if (line.toLowerCase().contains("name") || line.toLowerCase().contains("registration")) {
+                        continue;
+                    }
+                }
+
+                // Split CSV columns (comma-separated)
+                String[] cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                for (int i = 0; i < cols.length; i++) {
+                    cols[i] = cols[i].replace("\"", "").trim();
+                }
+
+                String regId = cols.length > 0 ? cols[0] : "";
+                String fullName = cols.length > 1 ? cols[1] : "";
+                String email = cols.length > 2 ? cols[2] : "";
+                String mobile = cols.length > 3 ? cols[3] : "";
+                String institution = cols.length > 4 ? cols[4] : "";
+                String category = cols.length > 5 && !cols[5].isEmpty() ? cols[5] : "Delegate";
+
+                if (fullName.isEmpty()) continue;
+
+                // If Registration ID is blank, auto-generate sequential ID
+                if (regId.isEmpty()) {
+                    regId = String.format("%s-%04d", conference.getCode(), 
+                            delegateRepository.countByConference(conference) + toSave.size() + 1);
+                }
+
+                // Anti-duplicate protection: Skip if Registration ID already exists in this conference
+                if (delegateRepository.existsByConferenceAndRegistrationId(conference, regId)) {
+                    skippedCount++;
+                    continue;
+                }
+
+                Delegate d = new Delegate(conference, regId, fullName, email, mobile, institution, category);
+                d.setRegistrationSource("IMPORTED");
+                d.setRegisteredAt(LocalDateTime.now());
+                toSave.add(d);
+                importedCount++;
+            }
+
+            if (!toSave.isEmpty()) {
+                delegateRepository.saveAll(toSave);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage(), e);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("importedCount", importedCount);
+        result.put("skippedCount", skippedCount);
+        result.put("totalProcessed", importedCount + skippedCount);
+        return result;
     }
 }

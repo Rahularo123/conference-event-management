@@ -142,6 +142,9 @@
                 <a href="/scanner.html" target="_blank" class="btn btn-outline-light btn-sm fw-semibold">
                     <i class="bi bi-qr-code-scan me-1"></i> Open Mobile Scanner
                 </a>
+                <a href="/certificate.html" target="_blank" class="btn btn-outline-warning btn-sm fw-semibold">
+                    <i class="bi bi-award me-1"></i> Certificate Portal
+                </a>
             </div>
         </div>
     </nav>
@@ -203,6 +206,9 @@
                     <p class="text-muted mb-0 small">Search registered doctors, register walk-ins, and print on-the-spot 4×6 badges.</p>
                 </div>
                 <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Import CSV
+                    </button>
                     <button class="btn btn-outline-secondary" onclick="exportCsv()">
                         <i class="bi bi-download me-1"></i> Export Excel
                     </button>
@@ -343,6 +349,36 @@
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-custom-primary py-2">
                                 <i class="bi bi-check2-circle me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: BULK CSV IMPORT -->
+    <div class="modal fade" id="importCsvModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-spreadsheet me-2 text-primary"></i>Bulk Import Attendees</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Upload an Excel/CSV spreadsheet with pre-registered attendees. Duplicate registration IDs will be skipped automatically.</p>
+                    <div class="alert alert-light border small text-muted mb-3">
+                        <strong>Expected Columns:</strong><br>
+                        <code>RegistrationId, FullName, Email, Mobile, Institution, Category</code>
+                    </div>
+                    <form id="csvImportForm" onsubmit="uploadCsv(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Choose CSV File *</label>
+                            <input type="file" id="csvFileInput" class="form-control" accept=".csv" required>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" id="btnUploadCsv" class="btn btn-custom-primary py-2">
+                                <i class="bi bi-cloud-arrow-up me-1"></i> Upload & Import
                             </button>
                         </div>
                     </form>
@@ -596,6 +632,54 @@
                 }
             } catch (err) {
                 Swal.fire('Error', 'Could not connect to server.', 'error');
+            }
+        }
+
+        // 10. Bulk Import CSV
+        async function uploadCsv(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('csvFileInput');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                Swal.fire('No File', 'Please select a CSV file to upload.', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btnUploadCsv');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Uploading...`;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch(`/api/registration/import-csv?conferenceCode=${CONFERENCE_CODE}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json();
+                btn.disabled = false;
+                btn.innerHTML = `<i class="bi bi-cloud-arrow-up me-1"></i> Upload & Import`;
+
+                if (res.ok && data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('importCsvModal')).hide();
+                    document.getElementById('csvImportForm').reset();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Complete!',
+                        html: `<b>${data.importedCount}</b> attendees imported.<br><small class="text-muted">${data.skippedCount} duplicates skipped.</small>`
+                    });
+
+                    loadStats();
+                    loadDelegates();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to process CSV file.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="bi bi-cloud-arrow-up me-1"></i> Upload & Import`;
+                Swal.fire('Error', 'Connection failed while uploading CSV.', 'error');
             }
         }
 

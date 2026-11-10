@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -95,5 +96,17 @@ public class RegistrationController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+        /**
+     * 6. POST /api/registration/import-csv
+     * Upload and bulk-import attendees from a CSV spreadsheet.
+     */
+    @PostMapping(value = "/import-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> importCsv(
+            @RequestParam(defaultValue = "PHO26") String conferenceCode,
+            @RequestParam("file") MultipartFile file) {
+
+        Map<String, Object> result = registrationService.importDelegatesFromCsv(conferenceCode, file);
+        return ResponseEntity.ok(result);
     }
 }
