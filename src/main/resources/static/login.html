@@ -12,40 +12,87 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1a2744 50%, #0f172a 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background orbs */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 500px; height: 500px;
+            background: #2563eb;
+            top: -150px; left: -100px;
+        }
+
+        body::after {
+            width: 400px; height: 400px;
+            background: #06b6d4;
+            bottom: -100px; right: -100px;
+            animation-delay: 4s;
+            animation-direction: reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.05); }
         }
 
         .login-card {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow:
+                0 25px 60px -12px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
             max-width: 440px;
             width: 100%;
-            padding: 2.5rem;
+            padding: 2.75rem;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(.4,0,.2,1) both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .brand-icon {
-            width: 56px;
-            height: 56px;
-            background: #eff6ff;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
             color: #2563eb;
-            border-radius: 14px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.75rem;
             margin: 0 auto 1.5rem auto;
+            box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.2);
         }
 
         .form-control {
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
         }
 
         .form-control:focus {
@@ -53,20 +100,44 @@
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+            border: 1.5px solid #e2e8f0;
+            border-right: none;
+            background: #f8fafc;
+        }
+
         .btn-login {
-            background-color: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 0.8rem;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.85rem;
             border: none;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 4px 14px -3px rgba(37, 99, 235, 0.45);
+            font-size: 0.95rem;
         }
 
         .btn-login:hover {
-            background-color: #1d4ed8;
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
             color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.5);
         }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .footer-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer-link a:hover { color: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -107,7 +178,7 @@
             </button>
         </form>
 
-        <div class="text-center mt-3 pt-3 border-top">
+        <div class="text-center mt-3 pt-3 border-top footer-link">
             <small class="text-muted">
                 Need counter scanning? <a href="/scanner.html" class="text-decoration-none fw-semibold">Open Mobile Scanner</a>
             </small>
