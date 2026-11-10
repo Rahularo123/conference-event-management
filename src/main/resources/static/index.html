@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joy Events - Conference Operations Platform</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-navy: #0f172a;
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --bg-light: #f8fafc;
+            --card-border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: #1e293b;
+        }
+
+        .navbar-custom {
+            background-color: var(--primary-navy);
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.15);
+        }
+
+        .brand-title {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .badge-printed-yes {
+            background-color: #dcfce7;
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .badge-printed-no {
+            background-color: #fef3c7;
+            color: #b45309;
+            font-weight: 600;
+        }
+
+        .category-pill {
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .btn-custom-primary {
+            background-color: var(--accent-blue);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-custom-primary:hover {
+            background-color: #1d4ed8;
+            color: white;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-calendar2-check-fill text-info fs-3 me-2"></i>
+                <div>
+                    <div class="brand-title">JOY EVENTS</div>
+                    <div class="brand-subtitle">Conference Platform</div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 fs-6 border border-info border-opacity-25" id="currentConferenceBadge">
+                    <i class="bi bi-geo-alt-fill me-1"></i> PHOCON 2026 (PGIMER)
+                </span>
+                <a href="/scanner.html" target="_blank" class="btn btn-outline-light btn-sm fw-semibold">
+                    <i class="bi bi-qr-code-scan me-1"></i> Open Mobile Scanner
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4 py-4">
+
+        <!-- 4 LIVE STATS CARDS -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="stat-label">Total Delegates</span>
+                        <i class="bi bi-people-fill text-primary fs-4"></i>
+                    </div>
+                    <div class="stat-value" id="statTotalDelegates">0</div>
+                    <small class="text-muted">Registered in event</small>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="stat-label">Badges Printed</span>
+                        <i class="bi bi-person-badge-fill text-success fs-4"></i>
+                    </div>
+                    <div class="stat-value text-success" id="statBadgesPrinted">0</div>
+                    <small class="text-muted" id="statBadgesPending">0 pending</small>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="stat-label">Lunches Served</span>
+                        <i class="bi bi-cup-hot-fill text-warning fs-4"></i>
+                    </div>
+                    <div class="stat-value text-warning" id="statLunches">0</div>
+                    <small class="text-muted">Day 1 Buffet counter</small>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="stat-label">Kits Distributed</span>
+                        <i class="bi bi-briefcase-fill text-info fs-4"></i>
+                    </div>
+                    <div class="stat-value text-info" id="statKits">0</div>
+                    <small class="text-muted">Delegate kit desk</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN REGISTRATION DESK -->
+        <div class="content-card">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Registration Desk</h4>
+                    <p class="text-muted mb-0 small">Search registered doctors, register walk-ins, and print on-the-spot 4×6 badges.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary" onclick="exportCsv()">
+                        <i class="bi bi-download me-1"></i> Export Excel
+                    </button>
+                    <button class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#newRegistrationModal">
+                        <i class="bi bi-plus-circle-fill me-1"></i> New Walk-In Registration
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0" 
+                               placeholder="Search by Name, Reg ID (PHO26-0001), Phone, Email, or Hospital..." 
+                               onkeyup="handleSearch()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DELEGATES TABLE -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Reg ID</th>
+                            <th>Doctor / Delegate Name</th>
+                            <th>Category</th>
+                            <th>Institution / Hospital</th>
+                            <th>Contact</th>
+                            <th>Badge Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delegatesTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NEW REGISTRATION MODAL -->
+    <div class="modal fade" id="newRegistrationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2 text-primary"></i>New Walk-In Registration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="onsiteRegistrationForm" onsubmit="submitRegistration(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Doctor Full Name *</label>
+                            <input type="text" id="regFullName" class="form-control" placeholder="e.g. Dr. Kheterpal" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Category *</label>
+                                <select id="regCategory" class="form-select">
+                                    <option value="Delegate" selected>Delegate</option>
+                                    <option value="Faculty">Faculty</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="Organizer">Organizer</option>
+                                    <option value="Exhibitor">Exhibitor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Mobile Number</label>
+                                <input type="text" id="regMobile" class="form-control" placeholder="e.g. 9876543210">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" id="regEmail" class="form-control" placeholder="doctor@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Hospital / Institution</label>
+                            <input type="text" id="regInstitution" class="form-control" placeholder="e.g. PGIMER, Chandigarh">
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-custom-primary py-2">
+                                <i class="bi bi-check-circle-fill me-1"></i> Register & Create Badge
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT DOCTOR MODAL -->
+    <div class="modal fade" id="editDoctorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Doctor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editDoctorForm" onsubmit="submitEdit(event)">
+                        <input type="hidden" id="editDoctorId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Registration ID</label>
+                            <input type="text" id="editRegId" class="form-control font-monospace bg-light" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Doctor Full Name *</label>
+                            <input type="text" id="editFullName" class="form-control" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Category *</label>
+                                <select id="editCategory" class="form-select">
+                                    <option value="Delegate">Delegate</option>
+                                    <option value="Faculty">Faculty</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="Organizer">Organizer</option>
+                                    <option value="Exhibitor">Exhibitor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Mobile Number</label>
+                                <input type="text" id="editMobile" class="form-control" placeholder="Enter mobile number">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" id="editEmail" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Hospital / Institution</label>
+                            <input type="text" id="editInstitution" class="form-control">
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-custom-primary py-2">
+                                <i class="bi bi-check2-circle me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- CLIENT JAVASCRIPT LOGIC -->
+    <script>
+        const CONFERENCE_CODE = 'PHO26';
+        let currentDelegatesCache = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadDelegates();
+        });
+
+        // 1. Fetch live dashboard metrics
+        async function loadStats() {
+            try {
+                const res = await fetch(`/api/admin/stats?conferenceCode=${CONFERENCE_CODE}&dayNumber=1`);
+                const data = await res.json();
+                
+                document.getElementById('statTotalDelegates').innerText = data.totalDelegates;
+                document.getElementById('statBadgesPrinted').innerText = data.badgesPrinted;
+                document.getElementById('statBadgesPending').innerText = `${data.badgesPending} pending`;
+                document.getElementById('statLunches').innerText = data.lunchesServedToday;
+                document.getElementById('statKits').innerText = data.kitsIssued;
+            } catch (err) {
+                console.error("Failed to load stats", err);
+            }
+        }
+
+        // 2. Fetch delegates list
+        async function loadDelegates(query = '') {
+            try {
+                const res = await fetch(`/api/registration/search?conferenceCode=${CONFERENCE_CODE}&query=${encodeURIComponent(query)}`);
+                currentDelegatesCache = await res.json();
+                renderTable(currentDelegatesCache);
+            } catch (err) {
+                console.error("Failed to load delegates", err);
+            }
+        }
+
+        // 3. Render table rows with Edit and Delete
+        function renderTable(delegates) {
+            const tbody = document.getElementById('delegatesTableBody');
+            tbody.innerHTML = '';
+
+            if (delegates.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">No attendees found.</td></tr>`;
+                return;
+            }
+
+            delegates.forEach(d => {
+                const badgePill = d.badgePrinted 
+                    ? `<span class="badge badge-printed-yes px-2 py-1"><i class="bi bi-check2"></i> Printed</span>`
+                    : `<span class="badge badge-printed-no px-2 py-1"><i class="bi bi-clock"></i> Pending</span>`;
+
+                const categoryClass = d.category === 'Faculty' ? 'bg-danger' : 
+                                      d.category === 'VIP' ? 'bg-warning text-dark' : 'bg-primary';
+
+                // WhatsApp Web link
+                const cleanPhone = (d.mobile || '').replace(/[^0-9]/g, '');
+                const phoneWithCountry = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+                const msg = encodeURIComponent(`Dear ${d.fullName},\nYour registration for PHOCON 2026 is confirmed!\nReg ID: ${d.registrationId}\nDownload your 4x6 Badge QR here: ${window.location.origin}/api/registration/badge-pdf/${d.id}`);
+                const waLink = `https://wa.me/${phoneWithCountry}?text=${msg}`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold font-monospace text-primary">${d.registrationId}</td>
+                    <td>
+                        <div class="fw-bold">${d.fullName}</div>
+                        <small class="text-muted">${d.email || 'No email'}</small>
+                    </td>
+                    <td><span class="badge ${categoryClass} category-pill">${d.category.toUpperCase()}</span></td>
+                    <td>${d.institution || '—'}</td>
+                    <td><i class="bi bi-telephone text-muted me-1"></i>${d.mobile || '—'}</td>
+                    <td>${badgePill}</td>
+                    <td class="text-end">
+                        <a href="/api/registration/badge-pdf/${d.id}" target="_blank" 
+                           class="btn btn-sm btn-outline-primary fw-semibold me-1" title="Print 4x6 Badge">
+                            <i class="bi bi-printer-fill"></i>
+                        </a>
+                        ${d.mobile ? `
+                        <a href="${waLink}" target="_blank" class="btn btn-sm btn-outline-success fw-semibold me-1" title="Send WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>` : ''}
+                        <!-- EDIT BUTTON (Pencil) -->
+                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="openEditModal(${d.id})" title="Edit Details">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <!-- DELETE BUTTON (Trash) -->
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDoctor(${d.id}, '${d.fullName}')" title="Delete Doctor">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. Live search handler (debounced)
+        let searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const q = document.getElementById('searchInput').value;
+                loadDelegates(q);
+            }, 300);
+        }
+
+        // 5. Open Edit Modal with pre-filled doctor data
+        function openEditModal(id) {
+            const doc = currentDelegatesCache.find(d => d.id === id);
+            if (!doc) return;
+
+            document.getElementById('editDoctorId').value = doc.id;
+            document.getElementById('editRegId').value = doc.registrationId;
+            document.getElementById('editFullName').value = doc.fullName;
+            document.getElementById('editCategory').value = doc.category;
+            document.getElementById('editMobile').value = doc.mobile || '';
+            document.getElementById('editEmail').value = doc.email || '';
+            document.getElementById('editInstitution').value = doc.institution || '';
+
+            const editModal = new bootstrap.Modal(document.getElementById('editDoctorModal'));
+            editModal.show();
+        }
+
+        // 6. Submit Edit Form
+        async function submitEdit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('editDoctorId').value;
+            const fullName = document.getElementById('editFullName').value;
+            const category = document.getElementById('editCategory').value;
+            const mobile = document.getElementById('editMobile').value;
+            const email = document.getElementById('editEmail').value;
+            const institution = document.getElementById('editInstitution').value;
+
+            try {
+                const params = new URLSearchParams({
+                    fullName: fullName,
+                    category: category,
+                    mobile: mobile,
+                    email: email,
+                    institution: institution
+                });
+
+                const res = await fetch(`/api/registration/delegate/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('editDoctorModal')).hide();
+                    Swal.fire('Updated!', 'Doctor details updated successfully.', 'success');
+                    loadDelegates();
+                } else {
+                    Swal.fire('Error', 'Failed to update details.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not reach server.', 'error');
+            }
+        }
+
+        // 7. Delete Doctor Confirmation
+        function deleteDoctor(id, name) {
+            Swal.fire({
+                title: 'Delete Doctor?',
+                html: `Are you sure you want to permanently delete <b>${name}</b>?<br><small class="text-danger">This will also delete their badge and scan history.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const res = await fetch(`/api/registration/delegate/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (res.ok) {
+                            Swal.fire('Deleted!', `${name} has been removed.`, 'success');
+                            loadStats();
+                            loadDelegates();
+                        } else {
+                            Swal.fire('Error', 'Failed to delete record.', 'error');
+                        }
+                    } catch (err) {
+                        Swal.fire('Error', 'Server error while deleting.', 'error');
+                    }
+                }
+            });
+        }
+
+        // 8. Submit onsite walk-in registration
+        async function submitRegistration(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById('regFullName').value;
+            const category = document.getElementById('regCategory').value;
+            const mobile = document.getElementById('regMobile').value;
+            const email = document.getElementById('regEmail').value;
+            const institution = document.getElementById('regInstitution').value;
+
+            try {
+                const bodyParams = new URLSearchParams({
+                    conferenceCode: CONFERENCE_CODE,
+                    fullName: fullName,
+                    category: category,
+                    mobile: mobile,
+                    email: email,
+                    institution: institution
+                });
+
+                const res = await fetch('/api/registration/register-onsite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: bodyParams
+                });
+
+                if (res.ok) {
+                    const newDoc = await res.json();
+                    bootstrap.Modal.getInstance(document.getElementById('newRegistrationModal')).hide();
+                    document.getElementById('onsiteRegistrationForm').reset();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Doctor Registered!',
+                        html: `<b>${newDoc.fullName}</b> assigned ID: <b>${newDoc.registrationId}</b>`,
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-printer"></i> Print Badge Now',
+                        cancelButtonText: 'Done'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.open(`/api/registration/badge-pdf/${newDoc.id}`, '_blank');
+                        }
+                    });
+
+                    loadStats();
+                    loadDelegates();
+                } else {
+                    Swal.fire('Error', 'Failed to register doctor.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not connect to server.', 'error');
+            }
+        }
+
+        // 9. Export Excel
+        function exportCsv() {
+            window.location.href = `/api/admin/export-csv?conferenceCode=${CONFERENCE_CODE}`;
+        }
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/registration")
@@ -16,13 +17,12 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    // Dependency Injection: Spring plugs in RegistrationService automatically
     public RegistrationController(RegistrationService registrationService) {
         this.registrationService = registrationService;
     }
 
     /**
-     * 1. GET /api/registration/search?conferenceCode=PHO26&query=Sharma
+     * 1. GET /api/registration/search
      * Returns matching delegates for the search bar.
      */
     @GetMapping("/search")
@@ -54,17 +54,42 @@ public class RegistrationController {
     }
 
     /**
-     * 3. GET /api/registration/badge-pdf/{delegateId}
-     * Streams the 4x6 print-ready PDF badge directly to the printer / browser dialog.
+     * 3. PUT /api/registration/delegate/{id}
+     * Updates an existing doctor's details (Fixes phone numbers, typos, category).
+     */
+    @PutMapping("/delegate/{id}")
+    public ResponseEntity<Delegate> updateDelegate(
+            @PathVariable Long id,
+            @RequestParam String fullName,
+            @RequestParam(required = false, defaultValue = "") String email,
+            @RequestParam(required = false, defaultValue = "") String mobile,
+            @RequestParam(required = false, defaultValue = "") String institution,
+            @RequestParam(defaultValue = "Delegate") String category) {
+
+        Delegate updated = registrationService.updateDelegate(id, fullName, email, mobile, institution, category);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * 4. DELETE /api/registration/delegate/{id}
+     * Deletes a doctor record.
+     */
+    @DeleteMapping("/delegate/{id}")
+    public ResponseEntity<Map<String, Object>> deleteDelegate(@PathVariable Long id) {
+        registrationService.deleteDelegate(id);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Doctor deleted successfully"));
+    }
+
+    /**
+     * 5. GET /api/registration/badge-pdf/{delegateId}
+     * Streams the 4x6 print-ready PDF badge directly.
      */
     @GetMapping("/badge-pdf/{delegateId}")
     public ResponseEntity<byte[]> getBadgePdf(@PathVariable Long delegateId) {
-        // Generates PDF and marks badge as printed in database
         byte[] pdfBytes = registrationService.printBadgeAndMark(delegateId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        // "inline" tells the browser to display and print the PDF rather than force-downloading it
         headers.setContentDispositionFormData("inline", "badge-" + delegateId + ".pdf");
 
         return ResponseEntity.ok()

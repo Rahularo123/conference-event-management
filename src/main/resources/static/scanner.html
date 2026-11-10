@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Joy Events - Mobile Counter Scanner</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- HTML5-QRCode Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scanner-header {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid #334155;
+        }
+
+        .result-card {
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            display: none;
+            max-width: 480px;
+            margin: 1rem auto 0 auto;
+            width: 100%;
+        }
+
+        .result-success {
+            background-color: #065f46;
+            border: 2px solid #10b981;
+            color: #ecfdf5;
+            display: block;
+        }
+
+        .result-error {
+            background-color: #881337;
+            border: 2px solid #f43f5e;
+            color: #fff1f2;
+            display: block;
+        }
+
+        .checkpoint-selector {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <div class="scanner-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-start">
+                <h5 class="fw-bold mb-0 text-white"><i class="bi bi-qr-code-scan text-info me-2"></i>COUNTER SCANNER</h5>
+                <small class="text-secondary" id="confCodeDisplay">Loading Event...</small>
+            </div>
+            <a href="/" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <div class="container py-3 flex-grow-1 d-flex flex-column align-items-center">
+
+        <!-- DYNAMIC CHECKPOINT SELECTOR -->
+        <div class="w-100 mb-3" style="max-width: 480px;">
+            <label class="form-label text-secondary small fw-bold">ACTIVE CHECKPOINTS (LOADED FROM DB)</label>
+            <div class="row g-2">
+                <div class="col-8">
+                    <select id="checkpointType" class="form-select checkpoint-selector" onchange="resetScanState()">
+                        <option value="" disabled selected>Loading checkpoints...</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <input type="text" id="counterStation" class="form-control checkpoint-selector" value="Counter 1">
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMERA SCANNER VIEWPORT -->
+        <div id="reader"></div>
+
+        <!-- LIVE RESULT CARD -->
+        <div id="resultCard" class="result-card text-center shadow-lg">
+            <div id="resultIcon" class="fs-1 mb-2"></div>
+            <h4 id="resultTitle" class="fw-bold mb-1"></h4>
+            <div id="resultDoctor" class="fs-5 fw-semibold mb-1"></div>
+            <div id="resultDetails" class="small opacity-75 mb-3"></div>
+            <div id="resultBalance" class="badge bg-light text-dark px-3 py-2 fs-6"></div>
+        </div>
+
+        <!-- MANUAL SEARCH FALLBACK -->
+        <div class="w-100 mt-4 text-center" style="max-width: 480px;">
+            <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#manualEntry">
+                <i class="bi bi-keyboard me-1"></i> Camera Damaged? Manual Entry
+            </button>
+            <div class="collapse" id="manualEntry">
+                <div class="input-group">
+                    <input type="text" id="manualInput" class="form-control" placeholder="Scan or type QR token / Reg ID">
+                    <button class="btn btn-primary" onclick="handleManualSubmit()"><i class="bi bi-check-lg"></i> Check</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SCANNER JAVASCRIPT LOGIC -->
+    <script>
+        // Check URL for conference parameter (e.g. scanner.html?conference=PHOSS)
+        const urlParams = new URLSearchParams(window.location.search);
+        const CONFERENCE_CODE = urlParams.get('conference') || 'PHO26';
+        
+        let isProcessing = false;
+        let html5QrCode = null;
+
+        // Web Audio API for sound chimes
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playChime(success) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (success) {
+                    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.1); // A5
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else {
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.type = 'sawtooth';
+                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio play blocked", e);
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('confCodeDisplay').innerText = `Event: ${CONFERENCE_CODE}`;
+            loadDynamicCheckpoints();
+            startCamera();
+        });
+
+        // 1. Fetch checkpoints dynamically from Java backend
+        async function loadDynamicCheckpoints() {
+            try {
+                const res = await fetch(`/api/admin/checkpoints?conferenceCode=${CONFERENCE_CODE}`);
+                const checkpoints = await res.json();
+                
+                const select = document.getElementById('checkpointType');
+                select.innerHTML = '';
+
+                if (checkpoints.length === 0) {
+                    select.innerHTML = `<option value="">No checkpoints configured</option>`;
+                    return;
+                }
+
+                checkpoints.forEach((cp, idx) => {
+                    const icon = cp.type === 'KIT' ? '🎒' : cp.name.toLowerCase().includes('dinner') ? '🍷' : '🍽️';
+                    const opt = document.createElement('option');
+                    opt.value = JSON.stringify({ type: cp.type, day: cp.dayNumber, name: cp.name });
+                    opt.innerText = `${icon} ${cp.name}`;
+                    if (idx === 0) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Failed to load checkpoints", err);
+            }
+        }
+
+        function startCamera() {
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanFailure);
+            });
+        }
+
+        function onScanFailure(error) {
+            // Passive frames
+        }
+
+        // 2. Main Scan Handler (Reads dynamic checkpoint config)
+        async function onScanSuccess(decodedText) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            const selectVal = document.getElementById('checkpointType').value;
+            if (!selectVal) {
+                alert("Please select a checkpoint first!");
+                isProcessing = false;
+                return;
+            }
+
+            const checkpoint = JSON.parse(selectVal);
+            const counterName = document.getElementById('counterStation').value;
+
+            try {
+                let endpoint = '';
+                let params = new URLSearchParams();
+                params.append('qrToken', decodedText);
+                params.append('conferenceCode', CONFERENCE_CODE);
+                params.append('counterName', counterName);
+
+                if (checkpoint.type === 'FOOD') {
+                    endpoint = '/api/counter/redeem-lunch';
+                    params.append('dayNumber', checkpoint.day);
+                } else if (checkpoint.type === 'KIT') {
+                    endpoint = '/api/counter/redeem-kit';
+                }
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+
+                const data = await res.json();
+                displayResult(data);
+                playChime(data.success);
+
+            } catch (err) {
+                displayResult({
+                    success: false,
+                    message: "Communication error with server",
+                    delegateName: "Error",
+                    registrationId: "---"
+                });
+                playChime(false);
+            }
+
+            setTimeout(() => {
+                isProcessing = false;
+            }, 2500);
+        }
+
+        function displayResult(data) {
+            const card = document.getElementById('resultCard');
+            const icon = document.getElementById('resultIcon');
+            const title = document.getElementById('resultTitle');
+            const doc = document.getElementById('resultDoctor');
+            const details = document.getElementById('resultDetails');
+            const balance = document.getElementById('resultBalance');
+
+            if (data.success) {
+                card.className = "result-card result-success shadow-lg";
+                icon.innerHTML = `<i class="bi bi-check-circle-fill"></i>`;
+                title.innerText = "VERIFIED & APPROVED";
+                doc.innerText = data.delegateName || "Attendee";
+                details.innerText = `ID: ${data.registrationId} | Category: ${data.category}`;
+                balance.innerText = `Entitlement Balance: ${data.issued} / ${data.allowed} (Remaining: ${data.remaining})`;
+            } else {
+                card.className = "result-card result-error shadow-lg";
+                icon.innerHTML = `<i class="bi bi-x-circle-fill"></i>`;
+                title.innerText = "ACCESS REJECTED";
+                doc.innerText = data.delegateName || "Invalid Badge";
+                details.innerText = data.message;
+                balance.innerText = `Balance: ${data.issued || 0} / ${data.allowed || 0}`;
+            }
+        }
+
+        function resetScanState() {
+            document.getElementById('resultCard').className = "result-card";
+            document.getElementById('resultCard').style.display = "none";
+            isProcessing = false;
+        }
+
+        function handleManualSubmit() {
+            const val = document.getElementById('manualInput').value.trim();
+            if (val) {
+                onScanSuccess(val);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,16 @@
 package com.joyevents.platform.controller;
 
 import com.joyevents.platform.model.CategoryRule;
+import com.joyevents.platform.model.Checkpoint;
 import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.Delegate;
 import com.joyevents.platform.model.Redemption;
 import com.joyevents.platform.repository.CategoryRuleRepository;
+import com.joyevents.platform.repository.CheckpointRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.DelegateRepository;
 import com.joyevents.platform.repository.RedemptionRepository;
+import com.joyevents.platform.repository.UserRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +30,46 @@ public class AdminController {
     private final DelegateRepository delegateRepository;
     private final CategoryRuleRepository categoryRuleRepository;
     private final RedemptionRepository redemptionRepository;
+    private final CheckpointRepository checkpointRepository;
+    private final UserRepository userRepository;
 
+    // Dependency Injection: Spring plugs in all repositories automatically
     public AdminController(ConferenceRepository conferenceRepository,
                            DelegateRepository delegateRepository,
                            CategoryRuleRepository categoryRuleRepository,
-                           RedemptionRepository redemptionRepository) {
+                           RedemptionRepository redemptionRepository,
+                           CheckpointRepository checkpointRepository,
+                           UserRepository userRepository) {
         this.conferenceRepository = conferenceRepository;
         this.delegateRepository = delegateRepository;
         this.categoryRuleRepository = categoryRuleRepository;
         this.redemptionRepository = redemptionRepository;
+        this.checkpointRepository = checkpointRepository;
+        this.userRepository = userRepository;
+    }
+    
+        @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @RequestParam String username,
+            @RequestParam String password) {
+
+        var userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            var u = userOpt.get();
+            if (u.getPassword().equals(password) && u.isActive()) {
+                return ResponseEntity.ok(Map.of(
+                        "success", true,
+                        "username", u.getUsername(),
+                        "fullName", u.getFullName(),
+                        "role", u.getRole()
+                ));
+            }
+        }
+
+        return ResponseEntity.status(401).body(Map.of(
+                "success", false,
+                "message", "Invalid email or password!"
+        ));
     }
 
     /**
@@ -56,7 +90,6 @@ public class AdminController {
         long lunchesServed = redemptionRepository.countByConferenceAndItemTypeAndDayNumber(conference, "LUNCH", dayNumber);
         long kitsIssued = redemptionRepository.countByConferenceAndItemType(conference, "KIT");
 
-        // Latest recent scans (activity feed)
         List<Redemption> recentScans = redemptionRepository.findByConferenceOrderByIdDesc(conference);
         if (recentScans.size() > 10) {
             recentScans = recentScans.subList(0, 10);
@@ -75,8 +108,38 @@ public class AdminController {
     }
 
     /**
-     * 2. GET & POST /api/admin/conferences
-     * List all conferences or create a new one.
+     * 2. DYNAMIC CHECKPOINTS APIs (For Mobile Scanner Dropdown & Admin Setup)
+     */
+    @GetMapping("/checkpoints")
+    public ResponseEntity<List<Checkpoint>> getCheckpoints(
+            @RequestParam(defaultValue = "PHO26") String conferenceCode) {
+        Conference conference = conferenceRepository.findByCode(conferenceCode)
+                .orElseThrow(() -> new IllegalArgumentException("Conference not found: " + conferenceCode));
+        return ResponseEntity.ok(checkpointRepository.findByConferenceAndActiveTrue(conference));
+    }
+
+    @PostMapping("/checkpoints")
+    public ResponseEntity<Checkpoint> createCheckpoint(
+            @RequestParam String conferenceCode,
+            @RequestParam String name,
+            @RequestParam(defaultValue = "FOOD") String type,
+            @RequestParam(defaultValue = "1") int dayNumber) {
+
+        Conference conference = conferenceRepository.findByCode(conferenceCode)
+                .orElseThrow(() -> new IllegalArgumentException("Conference not found: " + conferenceCode));
+
+        Checkpoint checkpoint = new Checkpoint(conference, name, type.toUpperCase(), dayNumber);
+        return ResponseEntity.ok(checkpointRepository.save(checkpoint));
+    }
+
+    @DeleteMapping("/checkpoints/{id}")
+    public ResponseEntity<Map<String, Object>> deleteCheckpoint(@PathVariable Long id) {
+        checkpointRepository.deleteById(id);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Checkpoint deleted"));
+    }
+
+    /**
+     * 3. GET & POST /api/admin/conferences
      */
     @GetMapping("/conferences")
     public ResponseEntity<List<Conference>> getAllConferences() {
@@ -97,8 +160,7 @@ public class AdminController {
     }
 
     /**
-     * 3. GET & POST /api/admin/categories
-     * Configure meal and kit rules per category.
+     * 4. GET & POST /api/admin/categories
      */
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryRule>> getCategories(
@@ -130,8 +192,7 @@ public class AdminController {
     }
 
     /**
-     * 4. GET /api/admin/export-csv?conferenceCode=PHO26
-     * Generates a clean CSV file of all attendees for Microsoft Excel.
+     * 5. GET /api/admin/export-csv?conferenceCode=PHO26
      */
     @GetMapping("/export-csv")
     public ResponseEntity<byte[]> exportDelegatesCsv(

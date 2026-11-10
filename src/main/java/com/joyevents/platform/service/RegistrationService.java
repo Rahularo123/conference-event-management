@@ -4,6 +4,7 @@ import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.Delegate;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.DelegateRepository;
+import com.joyevents.platform.repository.RedemptionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +16,17 @@ public class RegistrationService {
 
     private final DelegateRepository delegateRepository;
     private final ConferenceRepository conferenceRepository;
+    private final RedemptionRepository redemptionRepository;
     private final BadgePdfService badgePdfService;
 
-    // Dependency Injection: Spring plugs in the repositories and badge generator
+    // Dependency Injection
     public RegistrationService(DelegateRepository delegateRepository,
                                ConferenceRepository conferenceRepository,
+                               RedemptionRepository redemptionRepository,
                                BadgePdfService badgePdfService) {
         this.delegateRepository = delegateRepository;
         this.conferenceRepository = conferenceRepository;
+        this.redemptionRepository = redemptionRepository;
         this.badgePdfService = badgePdfService;
     }
 
@@ -40,7 +44,7 @@ public class RegistrationService {
     }
 
     /**
-     * 2. Register an on-the-spot walk-in doctor with duplicate detection.
+     * 2. Register an on-the-spot walk-in doctor.
      */
     @Transactional
     public Delegate registerOnsiteDelegate(String conferenceCode, String fullName, String email, 
@@ -48,10 +52,8 @@ public class RegistrationService {
         Conference conference = conferenceRepository.findByCode(conferenceCode)
                 .orElseThrow(() -> new IllegalArgumentException("Conference not found: " + conferenceCode));
 
-        // Generate next sequential registration ID (e.g. PHO26-001)
         String nextRegId = generateNextRegistrationId(conference);
 
-        // Create new delegate object (its constructor automatically creates unique qrToken)
         Delegate delegate = new Delegate(conference, nextRegId, fullName, email, mobile, institution, category);
         delegate.setRegistrationSource("ONSITE");
         delegate.setRegisteredAt(LocalDateTime.now());
@@ -60,7 +62,36 @@ public class RegistrationService {
     }
 
     /**
-     * 3. Generates the next sequential registration ID (e.g. PHO26-001, PHO26-002).
+     * 3. Update an existing doctor's details (Fix wrong phone numbers, typos, etc.)
+     */
+    @Transactional
+    public Delegate updateDelegate(Long delegateId, String fullName, String email, 
+                                   String mobile, String institution, String category) {
+        Delegate delegate = delegateRepository.findById(delegateId)
+                .orElseThrow(() -> new IllegalArgumentException("Delegate not found: " + delegateId));
+
+        delegate.setFullName(fullName);
+        delegate.setEmail(email);
+        delegate.setMobile(mobile);
+        delegate.setInstitution(institution);
+        delegate.setCategory(category);
+
+        return delegateRepository.save(delegate);
+    }
+
+    /**
+     * 4. Permanently delete a delegate record and their redemption history.
+     */
+    @Transactional
+    public void deleteDelegate(Long delegateId) {
+        Delegate delegate = delegateRepository.findById(delegateId)
+                .orElseThrow(() -> new IllegalArgumentException("Delegate not found: " + delegateId));
+
+        delegateRepository.delete(delegate);
+    }
+
+    /**
+     * 5. Generates the next sequential registration ID (e.g. PHO26-0001, PHO26-0002).
      */
     private String generateNextRegistrationId(Conference conference) {
         long currentCount = delegateRepository.countByConference(conference);
@@ -68,19 +99,17 @@ public class RegistrationService {
     }
 
     /**
-     * 4. Marks badge as printed and generates the 4x6 print PDF.
+     * 6. Marks badge as printed and generates the 4x6 print PDF.
      */
     @Transactional
     public byte[] printBadgeAndMark(Long delegateId) {
         Delegate delegate = delegateRepository.findById(delegateId)
                 .orElseThrow(() -> new IllegalArgumentException("Delegate not found: " + delegateId));
 
-        // Mark as printed with timestamp
         delegate.setBadgePrinted(true);
         delegate.setBadgePrintTimestamp(LocalDateTime.now());
         delegateRepository.save(delegate);
 
-        // Generate and return the 4x6 PDF bytes
         return badgePdfService.generateBadgePdf(delegate);
     }
 }
