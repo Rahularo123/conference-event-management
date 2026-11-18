@@ -151,10 +151,11 @@ public class AdminController {
             @RequestParam String code,
             @RequestParam String name,
             @RequestParam String venue,
+            @RequestParam(required = false) String venueMapUrl,
             @RequestParam String startDate,
             @RequestParam String endDate) {
 
-        Conference conference = new Conference(code.toUpperCase(), name, venue,
+        Conference conference = new Conference(code.toUpperCase(), name, venue, venueMapUrl,
                 LocalDate.parse(startDate), LocalDate.parse(endDate));
         return ResponseEntity.ok(conferenceRepository.save(conference));
     }

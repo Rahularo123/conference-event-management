@@ -4,7 +4,6 @@ import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.Delegate;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.DelegateRepository;
-import com.joyevents.platform.repository.RedemptionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,29 +16,31 @@ import java.util.Map;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RegistrationService {
 
     private final DelegateRepository delegateRepository;
     private final ConferenceRepository conferenceRepository;
-    private final RedemptionRepository redemptionRepository;
     private final BadgePdfService badgePdfService;
 
     // Dependency Injection
     public RegistrationService(DelegateRepository delegateRepository,
                                ConferenceRepository conferenceRepository,
-                               RedemptionRepository redemptionRepository,
                                BadgePdfService badgePdfService) {
         this.delegateRepository = delegateRepository;
         this.conferenceRepository = conferenceRepository;
-        this.redemptionRepository = redemptionRepository;
         this.badgePdfService = badgePdfService;
     }
 
     /**
      * 1. Search delegates by Name, RegID, Mobile, Email, or Hospital.
      */
+    public Optional<Delegate> findById(Long delegateId) {
+        return delegateRepository.findById(delegateId);
+    }
+
     public List<Delegate> searchDelegates(String conferenceCode, String query) {
         Conference conference = conferenceRepository.findByCode(conferenceCode)
                 .orElseThrow(() -> new IllegalArgumentException("Conference not found: " + conferenceCode));

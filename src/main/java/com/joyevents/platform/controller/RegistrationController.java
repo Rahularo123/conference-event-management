@@ -1,15 +1,19 @@
 package com.joyevents.platform.controller;
 
 import com.joyevents.platform.model.Delegate;
+import com.joyevents.platform.service.NotificationService;
 import com.joyevents.platform.service.RegistrationService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/registration")
@@ -17,9 +21,11 @@ import java.util.Map;
 public class RegistrationController {
 
     private final RegistrationService registrationService;
+    private final NotificationService notificationService;
 
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(RegistrationService registrationService, NotificationService notificationService) {
         this.registrationService = registrationService;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -108,5 +114,24 @@ public class RegistrationController {
 
         Map<String, Object> result = registrationService.importDelegatesFromCsv(conferenceCode, file);
         return ResponseEntity.ok(result);
+    }
+        @GetMapping("/whatsapp-link/{id}")
+    public ResponseEntity<Map<String, String>> getWhatsAppLink(@PathVariable Long id, HttpServletRequest request) {
+        Optional<Delegate> opt = registrationService.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Delegate delegate = opt.get();
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + 
+                         (request.getServerPort() == 80 || request.getServerPort() == 443 ? "" : ":" + request.getServerPort());
+
+        String message = notificationService.buildWhatsAppMessage(delegate, baseUrl);
+        String waLink = notificationService.generateWhatsAppWebLink(delegate, baseUrl);
+
+        Map<String, String> resp = new HashMap<>();
+        resp.put("phone", delegate.getMobile());
+        resp.put("message", message);
+        resp.put("link", waLink);
+        return ResponseEntity.ok(resp);
     }
 }

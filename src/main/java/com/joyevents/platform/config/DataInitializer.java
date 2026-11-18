@@ -49,6 +49,7 @@ public class DataInitializer implements CommandLineRunner {
                 "PHO26",
                 "PHOCON 2026",
                 "PGIMER, Chandigarh",
+                "https://maps.app.goo.gl/aVjptnpTjBRUhV4n6",
                 LocalDate.of(2026, 10, 23),
                 LocalDate.of(2026, 10, 25)
         );
@@ -60,9 +61,11 @@ public class DataInitializer implements CommandLineRunner {
                 "PHOSS",
                 "10th PHOSSCON 2026",
                 "PGIMER, Chandigarh",
+                "https://maps.app.goo.gl/aVjptnpTjBRUhV4n6",
                 LocalDate.of(2026, 10, 24),
                 LocalDate.of(2026, 10, 25)
         );
+        phoss.setDescription("Pediatric Hematology Oncology Support Services Conference");
         conferenceRepository.save(phoss);
 
         // 3. Dynamic Checkpoints for PHOCON (3 Days + Gala Dinner)

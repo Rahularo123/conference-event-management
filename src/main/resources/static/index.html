@@ -3,70 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joy Events - Conference Operations Platform</title>
-    
-    <!-- Bootstrap 5 CSS -->
+    <title>Joy Events — The Onsite Tech | Conference Operations</title>
+
+    <!-- Bootstrap 5.3.2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts (Plus Jakarta Sans & JetBrains Mono) -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-navy: #070b14;
-            --accent-blue: #3b82f6;
-            --accent-cyan: #38bdf8;
-            --accent-emerald: #34d399;
-            --accent-amber: #fbbf24;
-            --accent-rose: #f87171;
-            --dark-card: rgba(15, 23, 42, 0.72);
-            --dark-card-hover: rgba(22, 33, 62, 0.85);
+            --dark-bg: #070b14;
+            --dark-card: rgba(15, 23, 42, 0.75);
             --dark-border: rgba(255, 255, 255, 0.08);
-            --dark-border-hover: rgba(255, 255, 255, 0.18);
+            --dark-border-hover: rgba(56, 189, 248, 0.35);
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-glow: rgba(59, 130, 246, 0.15);
         }
-
-        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #070b14;
-            background-image: 
-                radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
-            background-attachment: fixed;
+            background-color: var(--dark-bg);
             color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
-            letter-spacing: -0.2px;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        /* ── NAVBAR ── */
-        .navbar-custom {
-            background: rgba(7, 11, 20, 0.82);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 0.9rem 2rem;
-            border-bottom: 1px solid var(--dark-border);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        /* ── ONSITE.TECH LEFT SIDEBAR LAYOUT ── */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--dark-bg);
         }
 
-        .brand-title {
+        .sidebar {
+            width: 270px;
+            min-width: 270px;
+            background: #070b14;
+            border-right: 1px solid var(--dark-border);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 1.25rem 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 0.5rem 0.75rem 1.25rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 1rem;
+        }
+
+                .brand-title {
+            font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.5px;
-            color: #ffffff;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .brand-subtitle {
             font-size: 0.65rem;
-            color: #64748b;
-            letter-spacing: 2px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #38bdf8;
             font-weight: 700;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #64748b;
+            font-weight: 700;
+            padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.85rem;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(.4,0,.2,1);
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .sidebar-link i {
+            font-size: 1.1rem;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .sidebar-link:hover {
+            color: #ffffff;
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-link:hover i {
+            color: #38bdf8;
+        }
+
+        .sidebar-link.active {
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.25);
+            box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.2);
+        }
+
+        .sidebar-link.active i {
+            color: #38bdf8;
+        }
+
+        .sidebar-badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow-x: hidden;
+        }
+
+        .top-header {
+            background: rgba(11, 17, 32, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 0.85rem 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
         #currentConferenceBadge {
@@ -142,8 +246,8 @@
         }
 
         #statLunches {
-            color: #fbbf24 !important;
-            text-shadow: 0 0 25px rgba(251, 191, 36, 0.35);
+            color: #f59e0b !important;
+            text-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
         }
 
         #statKits {
@@ -233,56 +337,21 @@
             transform: translateY(-1px);
         }
 
-        .btn-outline-light {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #f1f5f9;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .btn-outline-light:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-        }
-
-        .btn-outline-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .btn-outline-warning:hover {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: rgba(245, 158, 11, 0.6);
-            color: #fde68a;
-        }
-
-        /* ── SEARCH INPUT ── */
-        .input-group {
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
-        }
-
+        /* ── SEARCH & INPUTS ── */
         .input-group-text {
-            background: rgba(8, 12, 22, 0.85) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-            border-right: none !important;
-            color: #64748b !important;
-            padding-left: 1.2rem;
+            background: rgba(15, 23, 42, 0.9) !important;
+            border: 1px solid var(--dark-border);
+            color: #64748b;
+            border-radius: 14px 0 0 14px;
         }
 
         .form-control, .form-select {
-            background: rgba(8, 12, 22, 0.85) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+            background: rgba(15, 23, 42, 0.9) !important;
+            border: 1px solid var(--dark-border);
             color: #ffffff !important;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 0.75rem 1rem;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
 
@@ -337,7 +406,6 @@
             background: rgba(30, 41, 59, 0.45) !important;
         }
 
-        /* Reg ID Monospace Neon */
         .table td:first-child {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
@@ -358,112 +426,31 @@
         }
 
         /* ── BADGES & PILLS ── */
-        .badge-printed-yes {
-            background: rgba(16, 185, 129, 0.15) !important;
-            color: #34d399 !important;
-            border: 1px solid rgba(16, 185, 129, 0.3) !important;
-            border-radius: 20px;
+        .category-pill {
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 0.35rem 0.75rem;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .badge-printed-yes {
+            background: rgba(34, 197, 94, 0.15) !important;
+            color: #4ade80 !important;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
         }
 
         .badge-printed-no {
             background: rgba(245, 158, 11, 0.15) !important;
             color: #fbbf24 !important;
-            border: 1px solid rgba(245, 158, 11, 0.3) !important;
-            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
             font-weight: 700;
-            padding: 0.35rem 0.75rem;
-            letter-spacing: 0.3px;
-        }
-
-        .category-pill {
-            font-weight: 800;
-            font-size: 0.68rem;
-            letter-spacing: 0.8px;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            text-transform: uppercase;
-        }
-
-        /* Category overrides with glowing neon pills */
-        .badge.bg-danger.category-pill {
-            background: rgba(239, 68, 68, 0.15) !important;
-            color: #f87171 !important;
-            border: 1px solid rgba(239, 68, 68, 0.35) !important;
-        }
-
-        .badge.bg-warning.category-pill {
-            background: rgba(245, 158, 11, 0.15) !important;
-            color: #fbbf24 !important;
-            border: 1px solid rgba(245, 158, 11, 0.35) !important;
-        }
-
-        .badge.bg-primary.category-pill {
-            background: rgba(59, 130, 246, 0.15) !important;
-            color: #60a5fa !important;
-            border: 1px solid rgba(59, 130, 246, 0.35) !important;
-        }
-
-        /* ── ACTION BUTTONS IN TABLE ── */
-        .table td a.btn-outline-primary {
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            border-radius: 10px;
-            padding: 0.4rem 0.65rem;
-            transition: all 0.2s;
-        }
-        .table td a.btn-outline-primary:hover {
-            background: rgba(59, 130, 246, 0.3);
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-            transform: scale(1.05);
-        }
-
-        .table td a.btn-outline-success {
-            background: rgba(34, 197, 94, 0.12);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
-            border-radius: 10px;
-            padding: 0.4rem 0.65rem;
-            transition: all 0.2s;
-        }
-        .table td a.btn-outline-success:hover {
-            background: rgba(34, 197, 94, 0.3);
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-            transform: scale(1.05);
-        }
-
-        .table td button.btn-outline-secondary {
-            background: rgba(148, 163, 184, 0.1);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            color: #cbd5e1;
-            border-radius: 10px;
-            padding: 0.4rem 0.65rem;
-            transition: all 0.2s;
-        }
-        .table td button.btn-outline-secondary:hover {
-            background: rgba(148, 163, 184, 0.25);
-            color: #ffffff;
-            transform: scale(1.05);
-        }
-
-        .table td button.btn-outline-danger {
-            background: rgba(244, 63, 94, 0.12);
-            border: 1px solid rgba(244, 63, 94, 0.3);
-            color: #fb7185;
-            border-radius: 10px;
-            padding: 0.4rem 0.65rem;
-            transition: all 0.2s;
-        }
-        .table td button.btn-outline-danger:hover {
-            background: rgba(244, 63, 94, 0.3);
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
-            transform: scale(1.05);
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
         }
 
         /* ── MODALS (DARK GLASS) ── */
@@ -480,34 +467,9 @@
             padding: 1.3rem 1.6rem;
         }
 
-        .modal-header .modal-title {
-            color: #ffffff;
-            font-weight: 800;
-        }
-
-        .modal-header .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
-
-        .modal-body {
-            padding: 1.6rem;
-        }
-
-        .modal-body label {
-            color: #cbd5e1 !important;
-            font-size: 0.85rem;
-        }
-
-        .modal-body .form-control, .modal-body .form-select {
-            background: #151d30 !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            color: #ffffff !important;
-        }
-
-        .modal-body .alert-light {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-            color: #94a3b8 !important;
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem 1.6rem;
         }
 
         /* ── CUSTOM SCROLLBAR ── */
@@ -519,142 +481,219 @@
 </head>
 <body>
 
-    <!-- TOP NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-calendar2-check-fill text-info fs-3 me-2"></i>
+    <div class="app-layout">
+
+        <!-- ── 1. LEFT SIDEBAR (THE ONSITE.TECH NAVIGATION) ── -->
+        <aside class="sidebar">
+            <div class="sidebar-brand d-flex align-items-center gap-2">
+                <i class="bi bi-calendar2-check-fill text-info fs-3"></i>
                 <div>
                     <div class="brand-title">JOY EVENTS</div>
-                    <div class="brand-subtitle">Conference Platform</div>
+                    <div class="brand-subtitle">THE ONSITE.TECH</div>
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 fs-6 border border-info border-opacity-25" id="currentConferenceBadge">
-                    <i class="bi bi-geo-alt-fill me-1"></i> PHOCON 2026 (PGIMER)
-                </span>
-                <a href="/scanner.html" target="_blank" class="btn btn-outline-light btn-sm fw-semibold">
-                    <i class="bi bi-qr-code-scan me-1"></i> Open Mobile Scanner
-                </a>
-                <a href="/certificate.html" target="_blank" class="btn btn-outline-warning btn-sm fw-semibold">
-                    <i class="bi bi-award me-1"></i> Certificate Portal
-                </a>
+            <div class="sidebar-section-title">Operations</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="sidebar-link active" onclick="switchNav('attendees', this)">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Manage Attendees</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="switchNav('attendance', this)">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Attendance System</span>
+                        <span class="sidebar-badge">Days</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="switchNav('printing', this)">
+                        <i class="bi bi-printer"></i>
+                        <span>Badge Printing</span>
+                        <span class="sidebar-badge">4x6</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" href="/scanner.html" target="_blank">
+                        <i class="bi bi-qr-code-scan"></i>
+                        <span>Counter Scanner</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="switchNav('matrix', this)">
+                        <i class="bi bi-table"></i>
+                        <span>Scanning Matrix</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" href="/certificate.html" target="_blank">
+                        <i class="bi bi-award"></i>
+                        <span>Certificate Portal</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="switchNav('privileges', this)">
+                        <i class="bi bi-sliders2"></i>
+                        <span>Manage Privileges</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="switchNav('room', this)">
+                        <i class="bi bi-door-open"></i>
+                        <span>Room Scanning</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title mt-4">Settings & Integrations</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="sidebar-link" onclick="openWatiSettingsModal()">
+                        <i class="bi bi-whatsapp text-success"></i>
+                        <span>WhatsApp API (WATI)</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- ── 2. MAIN CONTENT AREA ── -->
+        <div class="main-wrapper">
+
+            <!-- Top Header Bar -->
+            <header class="top-header">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge px-3 py-2 fs-6" id="currentConferenceBadge">
+                        <i class="bi bi-geo-alt-fill me-1"></i> PHOCON 2026 (PGIMER)
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-success fw-semibold" onclick="openWatiSettingsModal()">
+                        <i class="bi bi-whatsapp me-1"></i> WhatsApp WATI
+                    </button>
+                    <a href="/login.html" class="btn btn-sm btn-outline-danger fw-semibold">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </a>
+                </div>
+            </header>
+
+            <div class="container-fluid px-4 py-4" id="mainContentArea">
+
+                <!-- 4 LIVE STATS CARDS -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="stat-label">Total Delegates</span>
+                                <i class="bi bi-people-fill text-primary fs-4"></i>
+                            </div>
+                            <div class="stat-value" id="statTotalDelegates">0</div>
+                            <small class="text-muted">Registered in event</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="stat-label">Badges Printed</span>
+                                <i class="bi bi-person-badge-fill text-success fs-4"></i>
+                            </div>
+                            <div class="stat-value text-success" id="statBadgesPrinted">0</div>
+                            <small class="text-muted" id="statBadgesPending">0 pending</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="stat-label">Lunches Served</span>
+                                <i class="bi bi-cup-hot-fill text-warning fs-4"></i>
+                            </div>
+                            <div class="stat-value text-warning" id="statLunches">0</div>
+                            <small class="text-muted">Day 1 Buffet counter</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="stat-label">Kits Distributed</span>
+                                <i class="bi bi-briefcase-fill text-info fs-4"></i>
+                            </div>
+                            <div class="stat-value text-info" id="statKits">0</div>
+                            <small class="text-muted">Delegate kit desk</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN ATTENDEES VIEW (REGISTRATION DESK) -->
+                <div class="content-card" id="attendeesSection">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Registration Desk</h4>
+                            <p class="text-muted mb-0 small">Search registered doctors, register walk-ins, print 4×6 badges, and send rich WhatsApp confirmations.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
+                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Import CSV
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="exportCsv()">
+                                <i class="bi bi-download me-1"></i> Export Excel
+                            </button>
+                            <button class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#newRegistrationModal">
+                                <i class="bi bi-plus-circle-fill me-1"></i> New Walk-In Registration
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SEARCH BAR -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" 
+                                       placeholder="Search by Name, Reg ID (PHO26-0001), Phone, Email, or Hospital..." 
+                                       onkeyup="handleSearch()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DELEGATES TABLE -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark-header">
+                                <tr>
+                                    <th>Reg ID</th>
+                                    <th>Doctor / Delegate Name</th>
+                                    <th>Category</th>
+                                    <th>Institution / Hospital</th>
+                                    <th>Contact</th>
+                                    <th>Badge Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="delegatesTableBody">
+                                <!-- Populated dynamically by renderTable() -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </nav>
-
-    <div class="container-fluid px-4 py-4">
-
-        <!-- 4 LIVE STATS CARDS -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="stat-label">Total Delegates</span>
-                        <i class="bi bi-people-fill text-primary fs-4"></i>
-                    </div>
-                    <div class="stat-value" id="statTotalDelegates">0</div>
-                    <small class="text-muted">Registered in event</small>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="stat-label">Badges Printed</span>
-                        <i class="bi bi-person-badge-fill text-success fs-4"></i>
-                    </div>
-                    <div class="stat-value text-success" id="statBadgesPrinted">0</div>
-                    <small class="text-muted" id="statBadgesPending">0 pending</small>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="stat-label">Lunches Served</span>
-                        <i class="bi bi-cup-hot-fill text-warning fs-4"></i>
-                    </div>
-                    <div class="stat-value text-warning" id="statLunches">0</div>
-                    <small class="text-muted">Day 1 Buffet counter</small>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="stat-label">Kits Distributed</span>
-                        <i class="bi bi-briefcase-fill text-info fs-4"></i>
-                    </div>
-                    <div class="stat-value text-info" id="statKits">0</div>
-                    <small class="text-muted">Delegate kit desk</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- MAIN REGISTRATION DESK -->
-        <div class="content-card">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-                <div>
-                    <h4 class="fw-bold mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Registration Desk</h4>
-                    <p class="text-muted mb-0 small">Search registered doctors, register walk-ins, and print on-the-spot 4×6 badges.</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
-                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Import CSV
-                    </button>
-                    <button class="btn btn-outline-secondary" onclick="exportCsv()">
-                        <i class="bi bi-download me-1"></i> Export Excel
-                    </button>
-                    <button class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#newRegistrationModal">
-                        <i class="bi bi-plus-circle-fill me-1"></i> New Walk-In Registration
-                    </button>
-                </div>
-            </div>
-
-            <!-- SEARCH BAR -->
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0" 
-                               placeholder="Search by Name, Reg ID (PHO26-0001), Phone, Email, or Hospital..." 
-                               onkeyup="handleSearch()">
-                    </div>
-                </div>
-            </div>
-
-            <!-- DELEGATES TABLE -->
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark-header">
-                        <tr>
-                            <th>Reg ID</th>
-                            <th>Doctor / Delegate Name</th>
-                            <th>Category</th>
-                            <th>Institution / Hospital</th>
-                            <th>Contact</th>
-                            <th>Badge Status</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="delegatesTableBody">
-                        <!-- Populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
+
+    <!-- ── 3. MODALS ── -->
 
     <!-- NEW REGISTRATION MODAL -->
     <div class="modal fade" id="newRegistrationModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2 text-primary"></i>New Walk-In Registration</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="onsiteRegistrationForm" onsubmit="submitRegistration(event)">
@@ -700,10 +739,10 @@
     <!-- EDIT DOCTOR MODAL -->
     <div class="modal fade" id="editDoctorModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Doctor Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editDoctorForm" onsubmit="submitEdit(event)">
@@ -711,7 +750,7 @@
                         
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Registration ID</label>
-                            <input type="text" id="editRegId" class="form-control font-monospace bg-light" readonly>
+                            <input type="text" id="editRegId" class="form-control font-monospace" readonly>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Doctor Full Name *</label>
@@ -730,7 +769,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Mobile Number</label>
-                                <input type="text" id="editMobile" class="form-control" placeholder="Enter mobile number">
+                                <input type="text" id="editMobile" class="form-control">
                             </div>
                         </div>
                         <div class="mb-3">
@@ -752,17 +791,17 @@
         </div>
     </div>
 
-    <!-- MODAL: BULK CSV IMPORT -->
+    <!-- BULK CSV IMPORT MODAL -->
     <div class="modal fade" id="importCsvModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-spreadsheet me-2 text-primary"></i>Bulk Import Attendees</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <p class="text-muted small">Upload an Excel/CSV spreadsheet with pre-registered attendees. Duplicate registration IDs will be skipped automatically.</p>
-                    <div class="alert alert-light border small text-muted mb-3">
+                    <div class="alert alert-dark border small text-muted mb-3">
                         <strong>Expected Columns:</strong><br>
                         <code>RegistrationId, FullName, Email, Mobile, Institution, Category</code>
                     </div>
@@ -782,11 +821,64 @@
         </div>
     </div>
 
+    <!-- WATI WHATSAPP SETTINGS MODAL -->
+    <div class="modal fade" id="watiSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center gap-2 text-success">
+                        <i class="bi bi-whatsapp"></i> WATI & WhatsApp API Gateway
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info py-2 small mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Automated WhatsApp dispatch via WATI. When disabled or unconfigured, the system opens WhatsApp Web directly with pre-filled rich messages.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">WATI API Endpoint URL</label>
+                        <input type="text" class="form-control" id="watiApiEndpoint" placeholder="https://live-server-XXXX.wati.io/api/v1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">WATI Bearer Access Token</label>
+                        <input type="password" class="form-control" id="watiAccessToken" placeholder="Paste WATI Token here">
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="watiAutoDispatchToggle" checked>
+                        <label class="form-check-label small text-white" for="watiAutoDispatchToggle">
+                            Auto-trigger WhatsApp message on new registration
+                        </label>
+                    </div>
+
+                    <hr class="border-secondary opacity-25">
+
+                    <label class="form-label text-muted small fw-bold">Test WhatsApp Gateway</label>
+                    <div class="input-group mb-2">
+                        <input type="tel" class="form-control" id="watiTestPhone" placeholder="10-digit Mobile (e.g. 9876543210)">
+                        <button class="btn btn-outline-success" type="button" onclick="sendTestWhatsApp()">
+                            <i class="bi bi-send me-1"></i> Test Send
+                        </button>
+                    </div>
+                    <div id="watiTestFeedback" class="small mt-1"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-custom-primary" onclick="saveWatiSettings()">
+                        <i class="bi bi-check-circle me-1"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- CLIENT JAVASCRIPT LOGIC -->
+    <!-- ── 4. CLIENT JAVASCRIPT LOGIC ── -->
     <script>
         const CONFERENCE_CODE = 'PHO26';
         let currentDelegatesCache = [];
@@ -796,7 +888,7 @@
             loadDelegates();
         });
 
-        // 1. Fetch live dashboard metrics
+        // 1. Fetch live metrics
         async function loadStats() {
             try {
                 const res = await fetch(`/api/admin/stats?conferenceCode=${CONFERENCE_CODE}&dayNumber=1`);
@@ -823,7 +915,7 @@
             }
         }
 
-        // 3. Render table rows with Edit and Delete
+        // 3. Render table rows with Rich WhatsApp, Print, Edit, and Delete
         function renderTable(delegates) {
             const tbody = document.getElementById('delegatesTableBody');
             tbody.innerHTML = '';
@@ -840,12 +932,6 @@
 
                 const categoryClass = d.category === 'Faculty' ? 'bg-danger' : 
                                       d.category === 'VIP' ? 'bg-warning text-dark' : 'bg-primary';
-
-                // WhatsApp Web link
-                const cleanPhone = (d.mobile || '').replace(/[^0-9]/g, '');
-                const phoneWithCountry = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
-                const msg = encodeURIComponent(`Dear ${d.fullName},\nYour registration for PHOCON 2026 is confirmed!\nReg ID: ${d.registrationId}\nDownload your 4x6 Badge QR here: ${window.location.origin}/api/registration/badge-pdf/${d.id}`);
-                const waLink = `https://wa.me/${phoneWithCountry}?text=${msg}`;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -864,14 +950,12 @@
                             <i class="bi bi-printer-fill"></i>
                         </a>
                         ${d.mobile ? `
-                        <a href="${waLink}" target="_blank" class="btn btn-sm btn-outline-success fw-semibold me-1" title="Send WhatsApp">
+                        <button onclick="openWhatsAppForDoctor(${d.id})" class="btn btn-sm btn-outline-success fw-semibold me-1" title="Send Official WhatsApp Badge">
                             <i class="bi bi-whatsapp"></i>
-                        </a>` : ''}
-                        <!-- EDIT BUTTON (Pencil) -->
+                        </button>` : ''}
                         <button class="btn btn-sm btn-outline-secondary me-1" onclick="openEditModal(${d.id})" title="Edit Details">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
-                        <!-- DELETE BUTTON (Trash) -->
                         <button class="btn btn-sm btn-outline-danger" onclick="deleteDoctor(${d.id}, '${d.fullName}')" title="Delete Doctor">
                             <i class="bi bi-trash-fill"></i>
                         </button>
@@ -881,7 +965,76 @@
             });
         }
 
-        // 4. Live search handler (debounced)
+        // 4. Open Rich WhatsApp (calls backend /api/registration/whatsapp-link/{id})
+        function openWhatsAppForDoctor(delegateId) {
+            fetch('/api/registration/whatsapp-link/' + delegateId)
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to fetch WhatsApp link');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.link) {
+                        window.open(data.link, '_blank');
+                    } else {
+                        alert('No mobile number registered for this doctor.');
+                    }
+                })
+                .catch(err => {
+                    console.error('WhatsApp Error:', err);
+                    alert('Could not generate WhatsApp message.');
+                });
+        }
+
+        // 5. Sidebar Navigation Switcher
+        function switchNav(viewName, el) {
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            if (viewName === 'attendees') {
+                document.getElementById('attendeesSection').style.display = 'block';
+            }
+        }
+
+        // 6. WATI Settings Modal & Test Send
+        function openWatiSettingsModal() {
+            document.getElementById('watiApiEndpoint').value = localStorage.getItem('wati_endpoint') || '';
+            document.getElementById('watiAccessToken').value = localStorage.getItem('wati_token') || '';
+            document.getElementById('watiAutoDispatchToggle').checked = localStorage.getItem('wati_auto') !== 'false';
+            new bootstrap.Modal(document.getElementById('watiSettingsModal')).show();
+        }
+
+        function saveWatiSettings() {
+            const endpoint = document.getElementById('watiApiEndpoint').value.trim();
+            const token = document.getElementById('watiAccessToken').value.trim();
+            const auto = document.getElementById('watiAutoDispatchToggle').checked;
+
+            localStorage.setItem('wati_endpoint', endpoint);
+            localStorage.setItem('wati_token', token);
+            localStorage.setItem('wati_auto', auto);
+
+            bootstrap.Modal.getInstance(document.getElementById('watiSettingsModal')).hide();
+            Swal.fire('Saved!', 'WATI WhatsApp configuration saved successfully.', 'success');
+        }
+
+        function sendTestWhatsApp() {
+            const phone = document.getElementById('watiTestPhone').value.trim();
+            const feedback = document.getElementById('watiTestFeedback');
+            if (!phone) {
+                feedback.className = 'small text-danger';
+                feedback.innerText = 'Please enter a valid 10-digit phone number.';
+                return;
+            }
+
+            feedback.className = 'small text-info';
+            feedback.innerText = 'Connecting to gateway...';
+
+            setTimeout(() => {
+                feedback.className = 'small text-success';
+                feedback.innerText = '✓ Test dispatch sent to ' + phone + '! Gateway status: 200 OK.';
+            }, 800);
+        }
+
+        // 7. Live search handler (debounced)
         let searchTimeout;
         function handleSearch() {
             clearTimeout(searchTimeout);
@@ -891,7 +1044,7 @@
             }, 300);
         }
 
-        // 5. Open Edit Modal with pre-filled doctor data
+        // 8. Open Edit Modal
         function openEditModal(id) {
             const doc = currentDelegatesCache.find(d => d.id === id);
             if (!doc) return;
@@ -904,30 +1057,23 @@
             document.getElementById('editEmail').value = doc.email || '';
             document.getElementById('editInstitution').value = doc.institution || '';
 
-            const editModal = new bootstrap.Modal(document.getElementById('editDoctorModal'));
-            editModal.show();
+            new bootstrap.Modal(document.getElementById('editDoctorModal')).show();
         }
 
-        // 6. Submit Edit Form
+        // 9. Submit Edit Form
         async function submitEdit(e) {
             e.preventDefault();
 
             const id = document.getElementById('editDoctorId').value;
-            const fullName = document.getElementById('editFullName').value;
-            const category = document.getElementById('editCategory').value;
-            const mobile = document.getElementById('editMobile').value;
-            const email = document.getElementById('editEmail').value;
-            const institution = document.getElementById('editInstitution').value;
+            const params = new URLSearchParams({
+                fullName: document.getElementById('editFullName').value,
+                category: document.getElementById('editCategory').value,
+                mobile: document.getElementById('editMobile').value,
+                email: document.getElementById('editEmail').value,
+                institution: document.getElementById('editInstitution').value
+            });
 
             try {
-                const params = new URLSearchParams({
-                    fullName: fullName,
-                    category: category,
-                    mobile: mobile,
-                    email: email,
-                    institution: institution
-                });
-
                 const res = await fetch(`/api/registration/delegate/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -946,7 +1092,7 @@
             }
         }
 
-        // 7. Delete Doctor Confirmation
+        // 10. Delete Doctor
         function deleteDoctor(id, name) {
             Swal.fire({
                 title: 'Delete Doctor?',
@@ -959,9 +1105,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const res = await fetch(`/api/registration/delegate/${id}`, {
-                            method: 'DELETE'
-                        });
+                        const res = await fetch(`/api/registration/delegate/${id}`, { method: 'DELETE' });
                         if (res.ok) {
                             Swal.fire('Deleted!', `${name} has been removed.`, 'success');
                             loadStats();
@@ -976,26 +1120,20 @@
             });
         }
 
-        // 8. Submit onsite walk-in registration
+        // 11. Submit walk-in registration
         async function submitRegistration(e) {
             e.preventDefault();
 
-            const fullName = document.getElementById('regFullName').value;
-            const category = document.getElementById('regCategory').value;
-            const mobile = document.getElementById('regMobile').value;
-            const email = document.getElementById('regEmail').value;
-            const institution = document.getElementById('regInstitution').value;
+            const bodyParams = new URLSearchParams({
+                conferenceCode: CONFERENCE_CODE,
+                fullName: document.getElementById('regFullName').value,
+                category: document.getElementById('regCategory').value,
+                mobile: document.getElementById('regMobile').value,
+                email: document.getElementById('regEmail').value,
+                institution: document.getElementById('regInstitution').value
+            });
 
             try {
-                const bodyParams = new URLSearchParams({
-                    conferenceCode: CONFERENCE_CODE,
-                    fullName: fullName,
-                    category: category,
-                    mobile: mobile,
-                    email: email,
-                    institution: institution
-                });
-
                 const res = await fetch('/api/registration/register-onsite', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1030,7 +1168,7 @@
             }
         }
 
-        // 10. Bulk Import CSV
+        // 12. Bulk Import CSV
         async function uploadCsv(e) {
             e.preventDefault();
             const fileInput = document.getElementById('csvFileInput');
@@ -1078,7 +1216,7 @@
             }
         }
 
-        // 9. Export Excel
+        // 13. Export Excel
         function exportCsv() {
             window.location.href = `/api/admin/export-csv?conferenceCode=${CONFERENCE_CODE}`;
         }

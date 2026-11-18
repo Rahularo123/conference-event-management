@@ -3,7 +3,6 @@ package com.joyevents.platform.service;
 import com.joyevents.platform.model.CertificateRecord;
 import com.joyevents.platform.model.Delegate;
 import com.joyevents.platform.repository.CertificateRecordRepository;
-import com.joyevents.platform.repository.DelegateRepository;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
@@ -11,20 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class CertificateService {
 
     private final CertificateRecordRepository certificateRecordRepository;
-    private final DelegateRepository delegateRepository;
     private final QrCodeService qrCodeService;
 
     public CertificateService(CertificateRecordRepository certificateRecordRepository,
-                              DelegateRepository delegateRepository,
                               QrCodeService qrCodeService) {
         this.certificateRecordRepository = certificateRecordRepository;
-        this.delegateRepository = delegateRepository;
         this.qrCodeService = qrCodeService;
     }
 
