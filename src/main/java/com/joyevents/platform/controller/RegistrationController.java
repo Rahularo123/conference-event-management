@@ -134,4 +134,13 @@ public class RegistrationController {
         resp.put("link", waLink);
         return ResponseEntity.ok(resp);
     }
+        /**
+     * POST /api/registration/mark-printed/{id}
+     * Marks badge as printed when printed directly from the calibrated browser dialog.
+     */
+    @PostMapping("/mark-printed/{id}")
+    public ResponseEntity<Map<String, Object>> markBadgePrinted(@PathVariable Long id) {
+        registrationService.markBadgePrinted(id);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Badge marked as printed"));
+    }
 }

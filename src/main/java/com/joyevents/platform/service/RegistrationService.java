@@ -122,6 +122,18 @@ public class RegistrationService {
     }
 
         /**
+     * Marks a delegate's physical badge as printed with a live timestamp.
+     */
+    @Transactional
+    public void markBadgePrinted(Long delegateId) {
+        Delegate delegate = delegateRepository.findById(delegateId)
+                .orElseThrow(() -> new IllegalArgumentException("Delegate not found: " + delegateId));
+        delegate.setBadgePrinted(true);
+        delegate.setBadgePrintTimestamp(LocalDateTime.now());
+        delegateRepository.save(delegate);
+    }
+
+        /**
      * 7. Bulk import delegates from an uploaded CSV spreadsheet.
      * Expected CSV Columns: RegistrationId, FullName, Email, Mobile, Institution, Category
      */

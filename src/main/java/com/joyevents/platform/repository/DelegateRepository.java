@@ -19,6 +19,9 @@ public interface DelegateRepository extends JpaRepository<Delegate, Long> {
     // 2. Lookup by Registration ID (e.g. "PHOS-00110") within an event
     Optional<Delegate> findByConferenceAndRegistrationIdIgnoreCase(Conference conference, String registrationId);
 
+    // 2b. Direct lookup by Registration ID (for manual scanner entry fallback)
+    Optional<Delegate> findByRegistrationIdIgnoreCase(String registrationId);
+
     // 3. Duplicate check before registering a new walk-in doctor
     boolean existsByConferenceAndRegistrationId(Conference conference, String registrationId);
 
