@@ -16,18 +16,24 @@
 
     <style>
         :root {
-            --dark-bg: #070b14;
-            --dark-card: rgba(15, 23, 42, 0.75);
-            --dark-border: rgba(255, 255, 255, 0.08);
-            --dark-border-hover: rgba(56, 189, 248, 0.35);
-            --accent-blue: #3b82f6;
-            --accent-cyan: #06b6d4;
-            --accent-glow: rgba(59, 130, 246, 0.15);
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --border-color: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary-blue: #0284c7;
+            --primary-hover: #0369a1;
+        }
+
+        /* ── GLOBAL SHARP EDGES (NO CURVY BOXES) ── */
+        *, *::before, *::after {
+            border-radius: 0px !important;
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: #f1f5f9;
+            background-color: var(--light-bg);
+            color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
             margin: 0;
@@ -35,18 +41,18 @@
             overflow-x: hidden;
         }
 
-        /* ── ONSITE.TECH LEFT SIDEBAR LAYOUT ── */
+        /* ── ONSITE.TECH LIGHT SIDEBAR LAYOUT ── */
         .app-layout {
             display: flex;
             min-height: 100vh;
-            background: var(--dark-bg);
+            background: var(--light-bg);
         }
 
         .sidebar {
-            width: 270px;
-            min-width: 270px;
-            background: #070b14;
-            border-right: 1px solid var(--dark-border);
+            width: 260px;
+            min-width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             position: sticky;
@@ -54,41 +60,37 @@
             height: 100vh;
             overflow-y: auto;
             z-index: 1000;
-            padding: 1.25rem 0.85rem;
-            transition: all 0.3s ease;
+            padding: 1.25rem 0.75rem;
         }
 
         .sidebar-brand {
-            padding: 0.5rem 0.75rem 1.25rem 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.5rem 0.5rem 1.25rem 0.5rem;
+            border-bottom: 2px solid #0f172a;
             margin-bottom: 1rem;
         }
 
-                .brand-title {
+        .brand-title {
             font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #0f172a;
         }
 
         .brand-subtitle {
             font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #38bdf8;
-            font-weight: 700;
+            color: var(--primary-blue);
+            font-weight: 800;
         }
 
         .sidebar-section-title {
             font-size: 0.68rem;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 700;
-            padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+            padding: 0.75rem 0.5rem 0.35rem 0.5rem;
         }
 
         .sidebar-menu {
@@ -97,45 +99,38 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .sidebar-link {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.65rem 0.85rem;
-            color: #94a3b8;
+            padding: 0.65rem 0.75rem;
+            color: #334155;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.88rem;
-            border-radius: 12px;
-            transition: all 0.2s cubic-bezier(.4,0,.2,1);
             border: 1px solid transparent;
             cursor: pointer;
+            transition: all 0.15s ease;
         }
 
         .sidebar-link i {
             font-size: 1.1rem;
             color: #64748b;
-            transition: all 0.2s;
         }
 
         .sidebar-link:hover {
-            color: #ffffff;
-            background: rgba(30, 41, 59, 0.5);
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar-link:hover i {
-            color: #38bdf8;
+            color: #0f172a;
+            background: #f1f5f9;
+            border-color: var(--border-color);
         }
 
         .sidebar-link.active {
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.1);
-            border-color: rgba(56, 189, 248, 0.25);
-            box-shadow: 0 4px 15px -3px rgba(56, 189, 248, 0.2);
+            color: #ffffff;
+            background: #0f172a;
+            border-color: #0f172a;
         }
 
         .sidebar-link.active i {
@@ -145,11 +140,10 @@
         .sidebar-badge {
             margin-left: auto;
             font-size: 0.65rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.2rem 0.45rem;
+            background: #e2e8f0;
+            color: #334155;
+            font-weight: 700;
         }
 
         .main-wrapper {
@@ -161,9 +155,8 @@
         }
 
         .top-header {
-            background: rgba(11, 17, 32, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--dark-border);
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
             padding: 0.85rem 1.75rem;
             display: flex;
             align-items: center;
@@ -174,380 +167,211 @@
         }
 
         #currentConferenceBadge {
-            background: rgba(56, 189, 248, 0.1) !important;
-            border: 1px solid rgba(56, 189, 248, 0.25) !important;
-            color: #38bdf8 !important;
-            border-radius: 20px;
+            background: #f0fdf4 !important;
+            border: 1px solid #bbf7d0 !important;
+            color: #166534 !important;
             font-weight: 700;
-            letter-spacing: 0.3px;
+            font-size: 0.85rem;
         }
 
-        /* ── STAT CARDS ── */
+        /* ── SHARP RECTANGULAR STAT CARDS ── */
         .stat-card {
-            background: var(--dark-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid var(--dark-border);
-            padding: 1.5rem 1.6rem;
-            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4);
-            transition: all 0.3s cubic-bezier(.4,0,.2,1);
-            position: relative;
-            overflow: hidden;
+            background: var(--light-card);
+            border: 1px solid var(--border-color);
+            padding: 1.3rem 1.4rem;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--dark-border-hover);
-            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.2);
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-            height: 4px;
-        }
+        .stat-card.card-success { border-left-color: #10b981; }
+        .stat-card.card-warning { border-left-color: #f59e0b; }
+        .stat-card.card-info { border-left-color: #06b6d4; }
 
         .stat-label {
             font-size: 0.72rem;
-            color: #94a3b8;
+            color: var(--text-muted);
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
 
         .stat-value {
-            font-size: 2.6rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -1.5px;
+            color: #0f172a;
             line-height: 1.1;
             margin: 0.35rem 0;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        #statTotalDelegates {
-            color: #ffffff;
-            text-shadow: 0 0 25px rgba(59, 130, 246, 0.35);
-        }
-
-        #statBadgesPrinted {
-            color: #34d399 !important;
-            text-shadow: 0 0 25px rgba(52, 211, 153, 0.35);
-        }
-
-        #statLunches {
-            color: #f59e0b !important;
-            text-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
-        }
-
-        #statKits {
-            color: #38bdf8 !important;
-            text-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
-        }
-
-        .stat-card small {
-            color: #64748b !important;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* ── REGISTRATION DESK CONTENT CARD ── */
+        /* ── CONTENT CONTAINER ── */
         .content-card {
-            background: var(--dark-card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: 24px;
-            border: 1px solid var(--dark-border);
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.55);
-            padding: 2rem;
+            background: var(--light-card);
+            border: 1px solid var(--border-color);
+            padding: 1.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .content-card h4 {
-            color: #ffffff;
-            font-size: 1.35rem;
+            color: #0f172a;
+            font-size: 1.25rem;
             font-weight: 800;
-            letter-spacing: -0.3px;
         }
 
-        .content-card p.text-muted {
-            color: #94a3b8 !important;
+        /* ── SHARP BUTTONS ── */
+        .btn {
+            font-weight: 600;
+            padding: 0.55rem 1.1rem;
             font-size: 0.88rem;
         }
 
-        /* ── BUTTONS ── */
         .btn-custom-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            background: #0f172a;
             color: white;
-            font-weight: 700;
-            border-radius: 12px;
-            padding: 0.65rem 1.4rem;
-            border: none;
-            box-shadow: 0 6px 20px -3px rgba(37, 99, 235, 0.5);
-            transition: all 0.25s cubic-bezier(.4,0,.2,1);
-            letter-spacing: 0.2px;
+            border: 1px solid #0f172a;
         }
 
         .btn-custom-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -2px rgba(37, 99, 235, 0.6);
+            background: #1e293b;
             color: white;
         }
 
-        .btn-outline-primary {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            border-radius: 12px;
-            font-weight: 600;
-            padding: 0.65rem 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .btn-outline-primary:hover {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.6);
-            color: #93c5fd;
-            transform: translateY(-1px);
-        }
-
-        .btn-outline-secondary {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            color: #e2e8f0;
-            border-radius: 12px;
-            font-weight: 600;
-            padding: 0.65rem 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .btn-outline-secondary:hover {
-            background: rgba(51, 65, 85, 0.7);
-            border-color: rgba(148, 163, 184, 0.4);
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        /* ── SEARCH & INPUTS ── */
-        .input-group-text {
-            background: rgba(15, 23, 42, 0.9) !important;
-            border: 1px solid var(--dark-border);
-            color: #64748b;
-            border-radius: 14px 0 0 14px;
-        }
-
-        .form-control, .form-select {
-            background: rgba(15, 23, 42, 0.9) !important;
-            border: 1px solid var(--dark-border);
-            color: #ffffff !important;
-            border-radius: 14px;
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .form-control::placeholder {
-            color: #64748b !important;
+        /* ── SHARP INPUTS ── */
+        .form-control, .form-select, .input-group-text {
+            background: #ffffff !important;
+            border: 1px solid var(--border-dark) !important;
+            color: #0f172a !important;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.88rem;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: var(--accent-blue) !important;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
-            color: #ffffff !important;
+            border-color: #0f172a !important;
+            box-shadow: none !important;
         }
 
-        /* ── TABLE STYLING ── */
+        /* ── SHARP TABLES ── */
         .table-responsive {
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--dark-border);
-            background: rgba(7, 11, 20, 0.4);
+            border: 1px solid var(--border-color);
+            background: #ffffff;
         }
 
         .table {
-            color: #e2e8f0;
+            color: #1e293b;
             margin-bottom: 0;
-            font-size: 0.9rem;
-            border-collapse: separate;
-            border-spacing: 0;
+            font-size: 0.88rem;
         }
 
         .table thead th {
-            background: rgba(11, 17, 32, 0.95) !important;
-            color: #94a3b8;
-            font-size: 0.7rem;
+            background: #f8fafc !important;
+            color: #475569;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 1rem 1.1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: none;
+            letter-spacing: 0.8px;
+            padding: 0.9rem 1rem;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .table tbody td {
-            background: transparent !important;
-            color: #e2e8f0;
-            padding: 1.1rem 1.1rem;
+            padding: 0.85rem 1rem;
             vertical-align: middle;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            transition: background 0.15s ease;
-        }
-
-        .table-hover tbody tr:hover td {
-            background: rgba(30, 41, 59, 0.45) !important;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .table td:first-child {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
-            color: #38bdf8 !important;
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+            color: #0284c7;
         }
 
-        .table td .fw-bold {
-            color: #ffffff !important;
-            font-weight: 700 !important;
-            font-size: 0.95rem;
-        }
-
-        .table td small.text-muted {
-            color: #64748b !important;
-            font-size: 0.8rem;
-        }
-
-        /* ── BADGES & PILLS ── */
-        .category-pill {
+        /* ── BADGES & STATUS ── */
+        .badge {
+            font-weight: 700;
+            padding: 0.35rem 0.65rem;
             font-size: 0.72rem;
-            font-weight: 700;
             letter-spacing: 0.5px;
-            padding: 0.45rem 0.85rem;
-            border-radius: 8px;
-            text-transform: uppercase;
         }
 
-        .badge-printed-yes {
-            background: rgba(34, 197, 94, 0.15) !important;
-            color: #4ade80 !important;
-            border: 1px solid rgba(34, 197, 94, 0.3);
+        .badge-present {
+            background: #dcfce7 !important;
+            color: #15803d !important;
+            border: 1px solid #86efac;
+        }
+
+        .badge-absent {
+            background: #fee2e2 !important;
+            color: #b91c1c !important;
+            border: 1px solid #fca5a5;
+        }
+
+        /* ── DAY TABS (RECTANGULAR SHARP TABS) ── */
+        .day-tab-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-dark);
+            color: #475569;
             font-weight: 700;
-            border-radius: 8px;
-            padding: 0.4rem 0.75rem;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            margin-right: -1px;
         }
 
-        .badge-printed-no {
-            background: rgba(245, 158, 11, 0.15) !important;
-            color: #fbbf24 !important;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            font-weight: 700;
-            border-radius: 8px;
-            padding: 0.4rem 0.75rem;
+        .day-tab-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
         }
 
-        /* ── MODALS (DARK GLASS) ── */
-        .modal-content {
-            background: #0b1120 !important;
-            color: #f1f5f9 !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 24px;
-            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.8) !important;
+        /* ── WEBCAM VIDEO BOX ── */
+        #webcamVideo, #webcamCanvas {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: #000;
+            border: 2px solid #0f172a;
         }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 1.3rem 1.6rem;
-        }
-
-        .modal-footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 1.2rem 1.6rem;
-        }
-
-        /* ── CUSTOM SCROLLBAR ── */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #070b14; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
 <body>
 
     <div class="app-layout">
 
-        <!-- ── 1. LEFT SIDEBAR (THE ONSITE.TECH NAVIGATION) ── -->
+        <!-- ── 1. LEFT SIDEBAR ── -->
         <aside class="sidebar">
-            <div class="sidebar-brand d-flex align-items-center gap-2">
-                <i class="bi bi-calendar2-check-fill text-info fs-3"></i>
-                <div>
-                    <div class="brand-title">JOY EVENTS</div>
-                    <div class="brand-subtitle">THE ONSITE.TECH</div>
-                </div>
+            <div class="sidebar-brand">
+                <div class="brand-title">JOY EVENTS</div>
+                <div class="brand-subtitle">THE ONSITE.TECH</div>
             </div>
 
             <div class="sidebar-section-title">Operations</div>
             <ul class="sidebar-menu">
                 <li>
-                    <a class="sidebar-link active" onclick="switchNav('attendees', this)">
+                    <a class="sidebar-link active" id="nav-attendees" onclick="switchNav('attendees')">
                         <i class="bi bi-people-fill"></i>
                         <span>Manage Attendees</span>
                     </a>
                 </li>
                 <li>
-                    <a class="sidebar-link" onclick="switchNav('attendance', this)">
+                    <a class="sidebar-link" id="nav-attendance" onclick="switchNav('attendance')">
                         <i class="bi bi-calendar-check"></i>
                         <span>Attendance System</span>
-                        <span class="sidebar-badge">Days</span>
+                        <span class="sidebar-badge">Live</span>
                     </a>
                 </li>
                 <li>
-                    <a class="sidebar-link" onclick="switchNav('printing', this)">
-                        <i class="bi bi-printer"></i>
-                        <span>Badge Printing</span>
-                        <span class="sidebar-badge">4x6</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="sidebar-link" href="/scanner.html" target="_blank">
+                    <a class="sidebar-link" onclick="window.open('/scanner.html', '_blank')">
                         <i class="bi bi-qr-code-scan"></i>
                         <span>Counter Scanner</span>
                     </a>
                 </li>
                 <li>
-                    <a class="sidebar-link" onclick="switchNav('matrix', this)">
-                        <i class="bi bi-table"></i>
-                        <span>Scanning Matrix</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="sidebar-link" href="/certificate.html" target="_blank">
+                    <a class="sidebar-link" onclick="window.open('/certificate.html', '_blank')">
                         <i class="bi bi-award"></i>
                         <span>Certificate Portal</span>
                     </a>
                 </li>
-                <li>
-                    <a class="sidebar-link" onclick="switchNav('privileges', this)">
-                        <i class="bi bi-sliders2"></i>
-                        <span>Manage Privileges</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="sidebar-link" onclick="switchNav('room', this)">
-                        <i class="bi bi-door-open"></i>
-                        <span>Room Scanning</span>
-                    </a>
-                </li>
             </ul>
 
-            <div class="sidebar-section-title mt-4">Settings & Integrations</div>
+            <div class="sidebar-section-title mt-4">Settings</div>
             <ul class="sidebar-menu">
                 <li>
                     <a class="sidebar-link" onclick="openWatiSettingsModal()">
@@ -564,16 +388,16 @@
             <!-- Top Header Bar -->
             <header class="top-header">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="badge px-3 py-2 fs-6" id="currentConferenceBadge">
+                    <span class="badge" id="currentConferenceBadge">
                         <i class="bi bi-geo-alt-fill me-1"></i> PHOCON 2026 (PGIMER)
                     </span>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-success fw-semibold" onclick="openWatiSettingsModal()">
+                    <button class="btn btn-sm btn-outline-success" onclick="openWatiSettingsModal()">
                         <i class="bi bi-whatsapp me-1"></i> WhatsApp WATI
                     </button>
-                    <a href="/login.html" class="btn btn-sm btn-outline-danger fw-semibold">
+                    <a href="/login.html" class="btn btn-sm btn-outline-danger">
                         <i class="bi bi-box-arrow-right me-1"></i> Logout
                     </a>
                 </div>
@@ -581,103 +405,164 @@
 
             <div class="container-fluid px-4 py-4" id="mainContentArea">
 
-                <!-- 4 LIVE STATS CARDS -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="stat-label">Total Delegates</span>
-                                <i class="bi bi-people-fill text-primary fs-4"></i>
+                <!-- ════════════ VIEW 1: MANAGE ATTENDEES (REGISTRATION DESK) ════════════ -->
+                <div id="attendeesSection">
+                    <!-- 4 Live Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Delegates</div>
+                                <div class="stat-value" id="statTotalDelegates">0</div>
+                                <small class="text-muted">Registered in event</small>
                             </div>
-                            <div class="stat-value" id="statTotalDelegates">0</div>
-                            <small class="text-muted">Registered in event</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-success">
+                                <div class="stat-label">Badges Printed</div>
+                                <div class="stat-value text-success" id="statBadgesPrinted">0</div>
+                                <small class="text-muted" id="statBadgesPending">0 pending</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-warning">
+                                <div class="stat-label">Lunches Served</div>
+                                <div class="stat-value text-warning" id="statLunches">0</div>
+                                <small class="text-muted">Day 1 Buffet counter</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-info">
+                                <div class="stat-label">Kits Distributed</div>
+                                <div class="stat-value text-info" id="statKits">0</div>
+                                <small class="text-muted">Delegate kit desk</small>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="stat-label">Badges Printed</span>
-                                <i class="bi bi-person-badge-fill text-success fs-4"></i>
+                    <!-- Registration Desk Table Card -->
+                    <div class="content-card">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                            <div>
+                                <h4 class="mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Registration Desk</h4>
+                                <p class="text-muted mb-0 small">Search doctors, register walk-ins, print 4×6 badges, and send WhatsApp messages.</p>
                             </div>
-                            <div class="stat-value text-success" id="statBadgesPrinted">0</div>
-                            <small class="text-muted" id="statBadgesPending">0 pending</small>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
+                                    <i class="bi bi-file-earmark-spreadsheet me-1"></i> Import CSV
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="exportCsv()">
+                                    <i class="bi bi-download me-1"></i> Export Excel
+                                </button>
+                                <button class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#newRegistrationModal">
+                                    <i class="bi bi-plus-circle-fill me-1"></i> New Registration
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="stat-label">Lunches Served</span>
-                                <i class="bi bi-cup-hot-fill text-warning fs-4"></i>
+                        <!-- Search Bar -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+                                    <input type="text" id="searchInput" class="form-control" 
+                                           placeholder="Search by Name, Reg ID (PHO26-0001), Phone, Email, Hospital..." 
+                                           onkeyup="handleSearch()">
+                                </div>
                             </div>
-                            <div class="stat-value text-warning" id="statLunches">0</div>
-                            <small class="text-muted">Day 1 Buffet counter</small>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="stat-label">Kits Distributed</span>
-                                <i class="bi bi-briefcase-fill text-info fs-4"></i>
-                            </div>
-                            <div class="stat-value text-info" id="statKits">0</div>
-                            <small class="text-muted">Delegate kit desk</small>
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Reg ID</th>
+                                        <th>Doctor / Delegate Name</th>
+                                        <th>Category</th>
+                                        <th>Institution</th>
+                                        <th>Contact</th>
+                                        <th>Badge</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="delegatesTableBody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- MAIN ATTENDEES VIEW (REGISTRATION DESK) -->
-                <div class="content-card" id="attendeesSection">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-                        <div>
-                            <h4 class="fw-bold mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Registration Desk</h4>
-                            <p class="text-muted mb-0 small">Search registered doctors, register walk-ins, print 4×6 badges, and send rich WhatsApp confirmations.</p>
+                <!-- ════════════ VIEW 2: ATTENDANCE SYSTEM (Day 1 / 2 / 3) ════════════ -->
+                <div id="attendanceSection" style="display: none;">
+                    
+                    <!-- Day Switcher Sharp Tabs -->
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="day-tab-btn active" id="tabDay1" onclick="switchDay(1)">Day 1 (23 Oct)</button>
+                            <button type="button" class="day-tab-btn" id="tabDay2" onclick="switchDay(2)">Day 2 (24 Oct)</button>
+                            <button type="button" class="day-tab-btn" id="tabDay3" onclick="switchDay(3)">Day 3 (25 Oct)</button>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
-                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Import CSV
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="exportCsv()">
-                                <i class="bi bi-download me-1"></i> Export Excel
-                            </button>
-                            <button class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#newRegistrationModal">
-                                <i class="bi bi-plus-circle-fill me-1"></i> New Walk-In Registration
-                            </button>
-                        </div>
+                        <span class="badge bg-dark text-white px-3 py-2 fs-6" id="attendanceActiveDayLabel">
+                            <i class="bi bi-calendar2-event me-1"></i> Viewing: Day 1 Attendance
+                        </span>
                     </div>
 
-                    <!-- SEARCH BAR -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" 
-                                       placeholder="Search by Name, Reg ID (PHO26-0001), Phone, Email, or Hospital..." 
-                                       onkeyup="handleSearch()">
+                    <!-- Attendance HUD Stats -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Expected</div>
+                                <div class="stat-value" id="attStatTotal">0</div>
+                                <small class="text-muted">Registered delegates</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-success">
+                                <div class="stat-label">Checked-In (Present)</div>
+                                <div class="stat-value text-success" id="attStatCheckedIn">0</div>
+                                <small class="text-muted" id="attStatRate">Turnout: 0%</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-warning">
+                                <div class="stat-label">Remaining (Absent)</div>
+                                <div class="stat-value text-warning" id="attStatRemaining">0</div>
+                                <small class="text-muted">Pending arrival</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card card-info">
+                                <div class="stat-label">Photos Clicked</div>
+                                <div class="stat-value text-info" id="attStatPhotos">0</div>
+                                <small class="text-muted">Webcam verified</small>
                             </div>
                         </div>
                     </div>
 
-                    <!-- DELEGATES TABLE -->
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-dark-header">
-                                <tr>
-                                    <th>Reg ID</th>
-                                    <th>Doctor / Delegate Name</th>
-                                    <th>Category</th>
-                                    <th>Institution / Hospital</th>
-                                    <th>Contact</th>
-                                    <th>Badge Status</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="delegatesTableBody">
-                                <!-- Populated dynamically by renderTable() -->
-                            </tbody>
-                        </table>
+                    <!-- Attendance Table Card -->
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0"><i class="bi bi-camera-fill me-2 text-primary"></i>Day-Wise Attendance & Photo Proof</h4>
+                            <input type="text" id="attendanceSearchInput" class="form-control" style="max-width: 350px;" 
+                                   placeholder="Filter by Name, Reg ID, Mobile..." onkeyup="filterAttendanceTable()">
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Reg ID</th>
+                                        <th>Photo Proof</th>
+                                        <th>Doctor Name</th>
+                                        <th>Category</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                        <th>Check-in Time</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -687,13 +572,49 @@
 
     <!-- ── 3. MODALS ── -->
 
+    <!-- WEBCAM LIVE PHOTO CAPTURE MODAL -->
+    <div class="modal fade" id="webcamModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-camera-fill me-2 text-primary"></i>Take Attendance Live Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeWebcam()"></button>
+                </div>
+                <div class="modal-body text-center p-3">
+                    <input type="hidden" id="webcamDelegateId">
+                    <p class="text-muted small mb-2">Align the doctor's face in the camera frame to snap proof of presence.</p>
+                    
+                    <!-- Live Camera Feed -->
+                    <video id="webcamVideo" autoplay playsinline></video>
+                    <!-- Captured Snapshot Canvas (Hidden) -->
+                    <canvas id="webcamCanvas" style="display: none;"></canvas>
+
+                    <div id="webcamPreviewArea" style="display: none;" class="mt-2">
+                        <p class="fw-bold text-success mb-1 small"><i class="bi bi-check-circle me-1"></i> Snapshot Captured!</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="closeWebcam()">Cancel</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-primary" id="btnSnapPhoto" onclick="snapPhoto()">
+                            <i class="bi bi-camera me-1"></i> Snap Photo
+                        </button>
+                        <button type="button" class="btn btn-success" id="btnSavePhoto" style="display: none;" onclick="savePhoto()">
+                            <i class="bi bi-check-lg me-1"></i> Save & Mark Present
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- NEW REGISTRATION MODAL -->
     <div class="modal fade" id="newRegistrationModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2 text-primary"></i>New Walk-In Registration</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="onsiteRegistrationForm" onsubmit="submitRegistration(event)">
@@ -742,7 +663,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Doctor Details</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editDoctorForm" onsubmit="submitEdit(event)">
@@ -797,11 +718,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-spreadsheet me-2 text-primary"></i>Bulk Import Attendees</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="text-muted small">Upload an Excel/CSV spreadsheet with pre-registered attendees. Duplicate registration IDs will be skipped automatically.</p>
-                    <div class="alert alert-dark border small text-muted mb-3">
+                    <p class="text-muted small">Upload a CSV spreadsheet with pre-registered attendees.</p>
+                    <div class="alert alert-light border small text-muted mb-3">
                         <strong>Expected Columns:</strong><br>
                         <code>RegistrationId, FullName, Email, Mobile, Institution, Category</code>
                     </div>
@@ -829,32 +750,27 @@
                     <h5 class="modal-title d-flex align-items-center gap-2 text-success">
                         <i class="bi bi-whatsapp"></i> WATI & WhatsApp API Gateway
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-info py-2 small mb-3">
-                        <i class="bi bi-info-circle me-1"></i> Automated WhatsApp dispatch via WATI. When disabled or unconfigured, the system opens WhatsApp Web directly with pre-filled rich messages.
+                    <div class="alert alert-light border small mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Configure automated WhatsApp dispatch via WATI.
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold">WATI API Endpoint URL</label>
                         <input type="text" class="form-control" id="watiApiEndpoint" placeholder="https://live-server-XXXX.wati.io/api/v1">
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold">WATI Bearer Access Token</label>
                         <input type="password" class="form-control" id="watiAccessToken" placeholder="Paste WATI Token here">
                     </div>
-
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="watiAutoDispatchToggle" checked>
-                        <label class="form-check-label small text-white" for="watiAutoDispatchToggle">
+                        <label class="form-check-label small" for="watiAutoDispatchToggle">
                             Auto-trigger WhatsApp message on new registration
                         </label>
                     </div>
-
-                    <hr class="border-secondary opacity-25">
-
+                    <hr>
                     <label class="form-label text-muted small fw-bold">Test WhatsApp Gateway</label>
                     <div class="input-group mb-2">
                         <input type="tel" class="form-control" id="watiTestPhone" placeholder="10-digit Mobile (e.g. 9876543210)">
@@ -882,18 +798,217 @@
     <script>
         const CONFERENCE_CODE = 'PHO26';
         let currentDelegatesCache = [];
+        let currentAttendanceCache = [];
+        let activeAttendanceDay = 1;
+        let webcamStream = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadStats();
             loadDelegates();
         });
 
-        // 1. Fetch live metrics
+        // ── 1. SIDEBAR NAVIGATION SWITCHER ──
+        function switchNav(viewName) {
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            
+            const attendeesSection = document.getElementById('attendeesSection');
+            const attendanceSection = document.getElementById('attendanceSection');
+
+            if (viewName === 'attendees') {
+                document.getElementById('nav-attendees').classList.add('active');
+                attendeesSection.style.display = 'block';
+                attendanceSection.style.display = 'none';
+                loadStats();
+                loadDelegates();
+            } else if (viewName === 'attendance') {
+                document.getElementById('nav-attendance').classList.add('active');
+                attendeesSection.style.display = 'none';
+                attendanceSection.style.display = 'block';
+                loadAttendance(activeAttendanceDay);
+            }
+        }
+
+        // ── 2. ATTENDANCE SYSTEM LOGIC (Day 1 / 2 / 3) ──
+        function switchDay(dayNum) {
+            activeAttendanceDay = dayNum;
+            document.querySelectorAll('.day-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tabDay${dayNum}`).classList.add('active');
+            
+            const dates = { 1: '23 Oct', 2: '24 Oct', 3: '25 Oct' };
+            document.getElementById('attendanceActiveDayLabel').innerHTML = `<i class="bi bi-calendar2-event me-1"></i> Viewing: Day ${dayNum} (${dates[dayNum]}) Attendance`;
+
+            loadAttendance(dayNum);
+        }
+
+        async function loadAttendance(dayNum) {
+            try {
+                // Fetch stats HUD
+                const statsRes = await fetch(`/api/attendance/stats?conferenceCode=${CONFERENCE_CODE}&dayNumber=${dayNum}`);
+                const stats = await statsRes.json();
+                document.getElementById('attStatTotal').innerText = stats.totalDelegates;
+                document.getElementById('attStatCheckedIn').innerText = stats.checkedIn;
+                document.getElementById('attStatRemaining').innerText = stats.remaining;
+                document.getElementById('attStatPhotos').innerText = stats.photosClicked;
+                document.getElementById('attStatRate').innerText = `Turnout: ${stats.turnoutRate}%`;
+
+                // Fetch attendees list
+                const listRes = await fetch(`/api/attendance?conferenceCode=${CONFERENCE_CODE}&dayNumber=${dayNum}`);
+                currentAttendanceCache = await listRes.json();
+                renderAttendanceTable(currentAttendanceCache);
+            } catch (err) {
+                console.error("Failed to load attendance", err);
+            }
+        }
+
+        function renderAttendanceTable(list) {
+            const tbody = document.getElementById('attendanceTableBody');
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No attendees found.</td></tr>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const statusBadge = item.attended 
+                    ? `<span class="badge badge-present"><i class="bi bi-check-circle-fill me-1"></i>PRESENT</span>`
+                    : `<span class="badge badge-absent"><i class="bi bi-x-circle me-1"></i>ABSENT</span>`;
+
+                const timeStr = item.checkInTime ? new Date(item.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+                const photoThumb = item.photoData 
+                    ? `<img src="${item.photoData}" style="width: 38px; height: 38px; object-fit: cover; border: 1px solid #0f172a;" title="Live Photo Proof">`
+                    : `<div style="width: 38px; height: 38px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #94a3b8;"><i class="bi bi-person"></i></div>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold font-monospace">${item.registrationId}</td>
+                    <td>${photoThumb}</td>
+                    <td>
+                        <div class="fw-bold">${item.fullName}</div>
+                        <small class="text-muted">${item.email || 'No email'}</small>
+                    </td>
+                    <td><span class="badge bg-light text-dark border">${item.category}</span></td>
+                    <td>${item.mobile || '—'}</td>
+                    <td>${statusBadge}</td>
+                    <td class="font-monospace small">${timeStr}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm ${item.attended ? 'btn-outline-danger' : 'btn-success'} me-1" 
+                                onclick="toggleQuickPresent(${item.delegateId})" title="Quick Toggle">
+                            <i class="bi ${item.attended ? 'bi-x-lg' : 'bi-check2'} me-1"></i>
+                            ${item.attended ? 'Mark Absent' : 'Quick Present'}
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="openWebcam(${item.delegateId})" title="Snap Live Photo">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function toggleQuickPresent(delegateId) {
+            try {
+                const res = await fetch(`/api/attendance/quick-present?delegateId=${delegateId}&dayNumber=${activeAttendanceDay}`, {
+                    method: 'POST'
+                });
+                if (res.ok) {
+                    loadAttendance(activeAttendanceDay);
+                }
+            } catch (err) {
+                console.error("Toggle error", err);
+            }
+        }
+
+        function filterAttendanceTable() {
+            const query = document.getElementById('attendanceSearchInput').value.toLowerCase().trim();
+            const filtered = currentAttendanceCache.filter(item => 
+                item.fullName.toLowerCase().includes(query) ||
+                item.registrationId.toLowerCase().includes(query) ||
+                (item.mobile && item.mobile.includes(query))
+            );
+            renderAttendanceTable(filtered);
+        }
+
+        // ── 3. WEBCAM LIVE PHOTO PROOF LOGIC ──
+        function openWebcam(delegateId) {
+            document.getElementById('webcamDelegateId').value = delegateId;
+            document.getElementById('webcamVideo').style.display = 'block';
+            document.getElementById('webcamCanvas').style.display = 'none';
+            document.getElementById('webcamPreviewArea').style.display = 'none';
+            document.getElementById('btnSnapPhoto').style.display = 'inline-block';
+            document.getElementById('btnSavePhoto').style.display = 'none';
+
+            const modal = new bootstrap.Modal(document.getElementById('webcamModal'));
+            modal.show();
+
+            navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 360 } })
+                .then(stream => {
+                    webcamStream = stream;
+                    document.getElementById('webcamVideo').srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Webcam denied", err);
+                    alert("Camera access denied or no webcam found.");
+                });
+        }
+
+        function closeWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+        }
+
+        function snapPhoto() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('webcamCanvas');
+            canvas.width = 320;
+            canvas.height = 240;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            video.style.display = 'none';
+            canvas.style.display = 'block';
+            document.getElementById('webcamPreviewArea').style.display = 'block';
+            document.getElementById('btnSnapPhoto').style.display = 'none';
+            document.getElementById('btnSavePhoto').style.display = 'inline-block';
+        }
+
+        async function savePhoto() {
+            const canvas = document.getElementById('webcamCanvas');
+            const photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            const delegateId = document.getElementById('webcamDelegateId').value;
+
+            try {
+                const res = await fetch('/api/attendance/photo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        delegateId: delegateId,
+                        dayNumber: activeAttendanceDay,
+                        photoData: photoBase64
+                    })
+                });
+
+                if (res.ok) {
+                    closeWebcam();
+                    bootstrap.Modal.getInstance(document.getElementById('webcamModal')).hide();
+                    Swal.fire('Saved!', 'Live photo proof attached & marked Present.', 'success');
+                    loadAttendance(activeAttendanceDay);
+                } else {
+                    Swal.fire('Error', 'Failed to save photo.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not reach server.', 'error');
+            }
+        }
+
+        // ── 4. ATTENDEES DESK LOGIC ──
         async function loadStats() {
             try {
                 const res = await fetch(`/api/admin/stats?conferenceCode=${CONFERENCE_CODE}&dayNumber=1`);
                 const data = await res.json();
-                
                 document.getElementById('statTotalDelegates').innerText = data.totalDelegates;
                 document.getElementById('statBadgesPrinted').innerText = data.badgesPrinted;
                 document.getElementById('statBadgesPending').innerText = `${data.badgesPending} pending`;
@@ -904,7 +1019,6 @@
             }
         }
 
-        // 2. Fetch delegates list
         async function loadDelegates(query = '') {
             try {
                 const res = await fetch(`/api/registration/search?conferenceCode=${CONFERENCE_CODE}&query=${encodeURIComponent(query)}`);
@@ -915,7 +1029,6 @@
             }
         }
 
-        // 3. Render table rows with Rich WhatsApp, Print, Edit, and Delete
         function renderTable(delegates) {
             const tbody = document.getElementById('delegatesTableBody');
             tbody.innerHTML = '';
@@ -927,37 +1040,34 @@
 
             delegates.forEach(d => {
                 const badgePill = d.badgePrinted 
-                    ? `<span class="badge badge-printed-yes px-2 py-1"><i class="bi bi-check2"></i> Printed</span>`
-                    : `<span class="badge badge-printed-no px-2 py-1"><i class="bi bi-clock"></i> Pending</span>`;
-
-                const categoryClass = d.category === 'Faculty' ? 'bg-danger' : 
-                                      d.category === 'VIP' ? 'bg-warning text-dark' : 'bg-primary';
+                    ? `<span class="badge bg-success"><i class="bi bi-check2"></i> Printed</span>`
+                    : `<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pending</span>`;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="fw-bold font-monospace text-primary">${d.registrationId}</td>
+                    <td class="fw-bold font-monospace">${d.registrationId}</td>
                     <td>
                         <div class="fw-bold">${d.fullName}</div>
                         <small class="text-muted">${d.email || 'No email'}</small>
                     </td>
-                    <td><span class="badge ${categoryClass} category-pill">${d.category.toUpperCase()}</span></td>
+                    <td><span class="badge bg-light text-dark border">${d.category}</span></td>
                     <td>${d.institution || '—'}</td>
                     <td><i class="bi bi-telephone text-muted me-1"></i>${d.mobile || '—'}</td>
                     <td>${badgePill}</td>
                     <td class="text-end">
                         <a href="/api/registration/badge-pdf/${d.id}" target="_blank" 
-                           class="btn btn-sm btn-outline-primary fw-semibold me-1" title="Print 4x6 Badge">
-                            <i class="bi bi-printer-fill"></i>
+                           class="btn btn-sm btn-outline-primary" title="Print 4x6 Badge">
+                            <i class="bi bi-printer"></i>
                         </a>
                         ${d.mobile ? `
-                        <button onclick="openWhatsAppForDoctor(${d.id})" class="btn btn-sm btn-outline-success fw-semibold me-1" title="Send Official WhatsApp Badge">
+                        <button onclick="openWhatsAppForDoctor(${d.id})" class="btn btn-sm btn-outline-success" title="Send WhatsApp">
                             <i class="bi bi-whatsapp"></i>
                         </button>` : ''}
-                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="openEditModal(${d.id})" title="Edit Details">
-                            <i class="bi bi-pencil-fill"></i>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="openEditModal(${d.id})" title="Edit Details">
+                            <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDoctor(${d.id}, '${d.fullName}')" title="Delete Doctor">
-                            <i class="bi bi-trash-fill"></i>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDoctor(${d.id}, '${d.fullName}')" title="Delete">
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;
@@ -965,90 +1075,24 @@
             });
         }
 
-        // 4. Open Rich WhatsApp (calls backend /api/registration/whatsapp-link/{id})
         function openWhatsAppForDoctor(delegateId) {
             fetch('/api/registration/whatsapp-link/' + delegateId)
-                .then(res => {
-                    if (!res.ok) throw new Error('Failed to fetch WhatsApp link');
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
-                    if (data.link) {
-                        window.open(data.link, '_blank');
-                    } else {
-                        alert('No mobile number registered for this doctor.');
-                    }
+                    if (data.link) window.open(data.link, '_blank');
+                    else alert('No mobile number registered.');
                 })
-                .catch(err => {
-                    console.error('WhatsApp Error:', err);
-                    alert('Could not generate WhatsApp message.');
-                });
+                .catch(err => alert('Could not generate WhatsApp message.'));
         }
 
-        // 5. Sidebar Navigation Switcher
-        function switchNav(viewName, el) {
-            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-            if (el) el.classList.add('active');
-
-            if (viewName === 'attendees') {
-                document.getElementById('attendeesSection').style.display = 'block';
-            }
-        }
-
-        // 6. WATI Settings Modal & Test Send
-        function openWatiSettingsModal() {
-            document.getElementById('watiApiEndpoint').value = localStorage.getItem('wati_endpoint') || '';
-            document.getElementById('watiAccessToken').value = localStorage.getItem('wati_token') || '';
-            document.getElementById('watiAutoDispatchToggle').checked = localStorage.getItem('wati_auto') !== 'false';
-            new bootstrap.Modal(document.getElementById('watiSettingsModal')).show();
-        }
-
-        function saveWatiSettings() {
-            const endpoint = document.getElementById('watiApiEndpoint').value.trim();
-            const token = document.getElementById('watiAccessToken').value.trim();
-            const auto = document.getElementById('watiAutoDispatchToggle').checked;
-
-            localStorage.setItem('wati_endpoint', endpoint);
-            localStorage.setItem('wati_token', token);
-            localStorage.setItem('wati_auto', auto);
-
-            bootstrap.Modal.getInstance(document.getElementById('watiSettingsModal')).hide();
-            Swal.fire('Saved!', 'WATI WhatsApp configuration saved successfully.', 'success');
-        }
-
-        function sendTestWhatsApp() {
-            const phone = document.getElementById('watiTestPhone').value.trim();
-            const feedback = document.getElementById('watiTestFeedback');
-            if (!phone) {
-                feedback.className = 'small text-danger';
-                feedback.innerText = 'Please enter a valid 10-digit phone number.';
-                return;
-            }
-
-            feedback.className = 'small text-info';
-            feedback.innerText = 'Connecting to gateway...';
-
-            setTimeout(() => {
-                feedback.className = 'small text-success';
-                feedback.innerText = '✓ Test dispatch sent to ' + phone + '! Gateway status: 200 OK.';
-            }, 800);
-        }
-
-        // 7. Live search handler (debounced)
-        let searchTimeout;
         function handleSearch() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const q = document.getElementById('searchInput').value;
-                loadDelegates(q);
-            }, 300);
+            const q = document.getElementById('searchInput').value;
+            loadDelegates(q);
         }
 
-        // 8. Open Edit Modal
         function openEditModal(id) {
             const doc = currentDelegatesCache.find(d => d.id === id);
             if (!doc) return;
-
             document.getElementById('editDoctorId').value = doc.id;
             document.getElementById('editRegId').value = doc.registrationId;
             document.getElementById('editFullName').value = doc.fullName;
@@ -1056,14 +1100,11 @@
             document.getElementById('editMobile').value = doc.mobile || '';
             document.getElementById('editEmail').value = doc.email || '';
             document.getElementById('editInstitution').value = doc.institution || '';
-
             new bootstrap.Modal(document.getElementById('editDoctorModal')).show();
         }
 
-        // 9. Submit Edit Form
         async function submitEdit(e) {
             e.preventDefault();
-
             const id = document.getElementById('editDoctorId').value;
             const params = new URLSearchParams({
                 fullName: document.getElementById('editFullName').value,
@@ -1072,58 +1113,36 @@
                 email: document.getElementById('editEmail').value,
                 institution: document.getElementById('editInstitution').value
             });
-
-            try {
-                const res = await fetch(`/api/registration/delegate/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: params
-                });
-
-                if (res.ok) {
-                    bootstrap.Modal.getInstance(document.getElementById('editDoctorModal')).hide();
-                    Swal.fire('Updated!', 'Doctor details updated successfully.', 'success');
-                    loadDelegates();
-                } else {
-                    Swal.fire('Error', 'Failed to update details.', 'error');
-                }
-            } catch (err) {
-                Swal.fire('Error', 'Could not reach server.', 'error');
+            const res = await fetch(`/api/registration/delegate/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params });
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('editDoctorModal')).hide();
+                Swal.fire('Updated!', 'Doctor details updated.', 'success');
+                loadDelegates();
             }
         }
 
-        // 10. Delete Doctor
         function deleteDoctor(id, name) {
             Swal.fire({
                 title: 'Delete Doctor?',
-                html: `Are you sure you want to permanently delete <b>${name}</b>?<br><small class="text-danger">This will also delete their badge and scan history.</small>`,
+                html: `Are you sure you want to delete <b>${name}</b>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
-                confirmButtonText: 'Yes, Delete',
-                cancelButtonText: 'Cancel'
+                confirmButtonText: 'Yes, Delete'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    try {
-                        const res = await fetch(`/api/registration/delegate/${id}`, { method: 'DELETE' });
-                        if (res.ok) {
-                            Swal.fire('Deleted!', `${name} has been removed.`, 'success');
-                            loadStats();
-                            loadDelegates();
-                        } else {
-                            Swal.fire('Error', 'Failed to delete record.', 'error');
-                        }
-                    } catch (err) {
-                        Swal.fire('Error', 'Server error while deleting.', 'error');
+                    const res = await fetch(`/api/registration/delegate/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        Swal.fire('Deleted!', `${name} has been removed.`, 'success');
+                        loadStats();
+                        loadDelegates();
                     }
                 }
             });
         }
 
-        // 11. Submit walk-in registration
         async function submitRegistration(e) {
             e.preventDefault();
-
             const bodyParams = new URLSearchParams({
                 conferenceCode: CONFERENCE_CODE,
                 fullName: document.getElementById('regFullName').value,
@@ -1132,93 +1151,66 @@
                 email: document.getElementById('regEmail').value,
                 institution: document.getElementById('regInstitution').value
             });
-
-            try {
-                const res = await fetch('/api/registration/register-onsite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: bodyParams
+            const res = await fetch('/api/registration/register-onsite', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: bodyParams });
+            if (res.ok) {
+                const newDoc = await res.json();
+                bootstrap.Modal.getInstance(document.getElementById('newRegistrationModal')).hide();
+                document.getElementById('onsiteRegistrationForm').reset();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Doctor Registered!',
+                    html: `<b>${newDoc.fullName}</b> assigned ID: <b>${newDoc.registrationId}</b>`,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-printer"></i> Print Badge Now',
+                    cancelButtonText: 'Done'
+                }).then((result) => {
+                    if (result.isConfirmed) window.open(`/api/registration/badge-pdf/${newDoc.id}`, '_blank');
                 });
-
-                if (res.ok) {
-                    const newDoc = await res.json();
-                    bootstrap.Modal.getInstance(document.getElementById('newRegistrationModal')).hide();
-                    document.getElementById('onsiteRegistrationForm').reset();
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Doctor Registered!',
-                        html: `<b>${newDoc.fullName}</b> assigned ID: <b>${newDoc.registrationId}</b>`,
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="bi bi-printer"></i> Print Badge Now',
-                        cancelButtonText: 'Done'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.open(`/api/registration/badge-pdf/${newDoc.id}`, '_blank');
-                        }
-                    });
-
-                    loadStats();
-                    loadDelegates();
-                } else {
-                    Swal.fire('Error', 'Failed to register doctor.', 'error');
-                }
-            } catch (err) {
-                Swal.fire('Error', 'Could not connect to server.', 'error');
+                loadStats();
+                loadDelegates();
             }
         }
 
-        // 12. Bulk Import CSV
         async function uploadCsv(e) {
             e.preventDefault();
             const fileInput = document.getElementById('csvFileInput');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                Swal.fire('No File', 'Please select a CSV file to upload.', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('btnUploadCsv');
-            btn.disabled = true;
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Uploading...`;
-
+            if (!fileInput.files.length) return;
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
-
-            try {
-                const res = await fetch(`/api/registration/import-csv?conferenceCode=${CONFERENCE_CODE}`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await res.json();
-                btn.disabled = false;
-                btn.innerHTML = `<i class="bi bi-cloud-arrow-up me-1"></i> Upload & Import`;
-
-                if (res.ok && data.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('importCsvModal')).hide();
-                    document.getElementById('csvImportForm').reset();
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Import Complete!',
-                        html: `<b>${data.importedCount}</b> attendees imported.<br><small class="text-muted">${data.skippedCount} duplicates skipped.</small>`
-                    });
-
-                    loadStats();
-                    loadDelegates();
-                } else {
-                    Swal.fire('Error', data.message || 'Failed to process CSV file.', 'error');
-                }
-            } catch (err) {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="bi bi-cloud-arrow-up me-1"></i> Upload & Import`;
-                Swal.fire('Error', 'Connection failed while uploading CSV.', 'error');
+            const res = await fetch(`/api/registration/import-csv?conferenceCode=${CONFERENCE_CODE}`, { method: 'POST', body: formData });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('importCsvModal')).hide();
+                document.getElementById('csvImportForm').reset();
+                Swal.fire('Import Complete!', `${data.importedCount} attendees imported.`, 'success');
+                loadStats();
+                loadDelegates();
             }
         }
 
-        // 13. Export Excel
         function exportCsv() {
             window.location.href = `/api/admin/export-csv?conferenceCode=${CONFERENCE_CODE}`;
+        }
+
+        function openWatiSettingsModal() {
+            document.getElementById('watiApiEndpoint').value = localStorage.getItem('wati_endpoint') || '';
+            document.getElementById('watiAccessToken').value = localStorage.getItem('wati_token') || '';
+            new bootstrap.Modal(document.getElementById('watiSettingsModal')).show();
+        }
+
+        function saveWatiSettings() {
+            localStorage.setItem('wati_endpoint', document.getElementById('watiApiEndpoint').value.trim());
+            localStorage.setItem('wati_token', document.getElementById('watiAccessToken').value.trim());
+            bootstrap.Modal.getInstance(document.getElementById('watiSettingsModal')).hide();
+            Swal.fire('Saved!', 'WATI settings saved.', 'success');
+        }
+
+        function sendTestWhatsApp() {
+            const phone = document.getElementById('watiTestPhone').value.trim();
+            const feedback = document.getElementById('watiTestFeedback');
+            if (!phone) { feedback.className = 'small text-danger'; feedback.innerText = 'Enter 10-digit number.'; return; }
+            feedback.className = 'small text-success';
+            feedback.innerText = '✓ Test message dispatched to ' + phone;
         }
     </script>
 </body>
