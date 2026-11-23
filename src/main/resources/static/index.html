@@ -407,6 +407,13 @@
                         <span>Badge Calibration (4×6)</span>
                     </a>
                 </li>
+                <li>
+                    <a class="sidebar-link" id="nav-eposter" onclick="switchNav('eposter')">
+                        <i class="bi bi-file-earmark-medical-fill"></i>
+                        <span>E-Poster Showcase</span>
+                        <span class="sidebar-badge bg-info">Research</span>
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-section-title mt-4">Conference Setup</div>
@@ -788,6 +795,52 @@
                     </div>
                 </div>
 
+                <!-- ── 6. E-POSTER SHOWCASE SECTION (eposter.php) ── -->
+                <div id="eposterSection" style="display: none;">
+                    <div class="content-card mb-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                            <div>
+                                <h4 class="mb-1"><i class="bi bi-file-earmark-medical-fill me-2 text-primary"></i>Scientific E-Poster Showcase</h4>
+                                <p class="text-muted mb-0 small">Explore, search, and review research abstracts submitted for PHOCON 2026.</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary" onclick="loadEPosters()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh Gallery
+                                </button>
+                                <button class="btn btn-primary" onclick="openAddPosterModal()">
+                                    <i class="bi bi-plus-lg me-1"></i> Submit Abstract
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search & Track Filter Toolbar -->
+                        <div class="row g-2 align-items-center">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-dark"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="eposterSearchInput" class="form-control border-dark" 
+                                           placeholder="Search by Title, Author, Institution, or Poster #..." 
+                                           oninput="filterEPosters()">
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="d-flex flex-wrap gap-2 justify-content-md-end" id="eposterTrackFilters">
+                                    <button class="btn btn-sm btn-dark active track-btn" onclick="selectTrackFilter('ALL', this)">All Tracks</button>
+                                    <button class="btn btn-sm btn-outline-dark track-btn" onclick="selectTrackFilter('Pediatric Leukemia', this)">Leukemia</button>
+                                    <button class="btn btn-sm btn-outline-dark track-btn" onclick="selectTrackFilter('Stem Cell Transplant', this)">Transplant</button>
+                                    <button class="btn btn-sm btn-outline-dark track-btn" onclick="selectTrackFilter('Diagnostics & Flow Cytometry', this)">Diagnostics</button>
+                                    <button class="btn btn-sm btn-outline-dark track-btn" onclick="selectTrackFilter('Solid Tumors', this)">Solid Tumors</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Poster Cards Grid -->
+                    <div class="row g-4" id="epostersGrid">
+                        <!-- Populated dynamically via renderEPosters() -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -1132,6 +1185,123 @@
         </div>
     </div>
 
+    <!-- ── 8. VIEW E-POSTER FULL DETAIL MODAL ── -->
+    <div class="modal fade" id="viewPosterModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border border-dark" style="border-radius: 0px !important;">
+                <div class="modal-header bg-dark text-white" style="border-radius: 0px !important;">
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="modalPosterNumber" class="badge bg-warning text-dark font-monospace fw-bold">EP-101</span>
+                        <span id="modalPosterTrack" class="badge bg-light text-dark font-monospace">Track</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <!-- Title & Authors Header -->
+                    <div class="p-3 bg-white border border-dark mb-4">
+                        <h4 id="modalPosterTitle" class="fw-bold mb-2 text-dark">Title</h4>
+                        <div class="fw-bold text-primary mb-1">
+                            <i class="bi bi-person-fill me-1"></i><span id="modalPosterAuthors">Primary Author</span>
+                        </div>
+                        <div class="small text-muted mb-2">
+                            <i class="bi bi-hospital me-1"></i><span id="modalPosterInstitution">Institution</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 small font-monospace text-muted pt-2 border-top">
+                            <span><i class="bi bi-eye me-1"></i><span id="modalPosterViews">0</span> views</span>
+                            <span><i class="bi bi-calendar-event me-1"></i>PHOCON 2026 Scientific Session</span>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Research Poster Board -->
+                    <div class="p-4 bg-white border border-dark mb-4 shadow-sm" style="border-radius: 0px !important;">
+                        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom border-dark">
+                            <span class="small fw-bold text-uppercase text-muted"><i class="bi bi-journal-text me-1"></i>Peer-Reviewed Abstract Content</span>
+                            <span class="badge bg-success-subtle text-success border border-success">Verified Presentation</span>
+                        </div>
+                        <div id="modalPosterAbstract" class="text-secondary" style="line-height: 1.8; white-space: pre-line; font-size: 1.05rem;">
+                            Abstract text...
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top border-dark">
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-dark" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Print / Download Abstract
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── 9. SUBMIT NEW E-POSTER MODAL ── -->
+    <div class="modal fade" id="addPosterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border border-dark" style="border-radius: 0px !important;">
+                <div class="modal-header bg-dark text-white" style="border-radius: 0px !important;">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus-fill me-2"></i>Submit Scientific E-Poster</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addPosterForm" onsubmit="handlePosterSubmit(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Poster / Abstract #</label>
+                                <input type="text" class="form-control border-dark font-monospace text-uppercase" 
+                                       id="posterNumberInput" placeholder="e.g. EP-105" required>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold">Scientific Track</label>
+                                <select class="form-select border-dark fw-bold" id="posterTrackInput" required>
+                                    <option value="Pediatric Leukemia">Pediatric Leukemia</option>
+                                    <option value="Stem Cell Transplant">Stem Cell Transplant</option>
+                                    <option value="Solid Tumors">Solid Tumors</option>
+                                    <option value="Diagnostics & Flow Cytometry">Diagnostics & Flow Cytometry</option>
+                                    <option value="Benign Hematology">Benign Hematology</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Research Paper Title</label>
+                            <input type="text" class="form-control border-dark" id="posterTitleInput" 
+                                   placeholder="Full title of the scientific study..." required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Primary / Presenting Author</label>
+                                <input type="text" class="form-control border-dark" id="posterAuthorInput" 
+                                       placeholder="e.g. Dr. Ananya Ray" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Co-Authors</label>
+                                <input type="text" class="form-control border-dark" id="posterCoAuthorsInput" 
+                                       placeholder="e.g. Dr. Aditya Sharma, Dr. Sunita Verma">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Department & Hospital / Institution</label>
+                            <input type="text" class="form-control border-dark" id="posterInstitutionInput" 
+                                   placeholder="e.g. Department of Pediatrics, PGIMER Chandigarh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Abstract Text (Background, Methods, Results, Conclusion)</label>
+                            <textarea class="form-control border-dark" id="posterAbstractInput" rows="6" 
+                                      placeholder="Background: ...&#10;Methods: ...&#10;Results: ...&#10;Conclusion: ..." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top border-dark">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-dark fw-bold px-4">Submit E-Poster</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1158,12 +1328,14 @@
             const matrixSection = document.getElementById('matrixSection');
             const roomsSection = document.getElementById('roomsSection');
             const privilegesSection = document.getElementById('privilegesSection');
+            const eposterSection = document.getElementById('eposterSection');
 
             if (attendeesSection) attendeesSection.style.display = 'none';
             if (attendanceSection) attendanceSection.style.display = 'none';
             if (matrixSection) matrixSection.style.display = 'none';
             if (roomsSection) roomsSection.style.display = 'none';
             if (privilegesSection) privilegesSection.style.display = 'none';
+            if (eposterSection) eposterSection.style.display = 'none';
 
             if (viewName === 'attendees') {
                 document.getElementById('nav-attendees').classList.add('active');
@@ -1186,6 +1358,10 @@
                 document.getElementById('nav-privileges').classList.add('active');
                 if (privilegesSection) privilegesSection.style.display = 'block';
                 loadPrivilegeSessions();
+            } else if (viewName === 'eposter') {
+                document.getElementById('nav-eposter').classList.add('active');
+                if (eposterSection) eposterSection.style.display = 'block';
+                loadEPosters();
             }
         }
 
@@ -1983,6 +2159,157 @@
                 await fetch(`/api/privileges/${id}`, { method: 'DELETE' });
                 loadPrivilegeSessions();
                 Swal.fire('Deleted!', 'Session removed.', 'success');
+            }
+        }
+
+        // ── 7. SCIENTIFIC E-POSTER SHOWCASE LOGIC (eposter.php) ──
+        let currentEPostersCache = [];
+        let activeEPosterTrack = 'ALL';
+
+        async function loadEPosters() {
+            try {
+                let url = `/api/eposters?conferenceCode=${CONFERENCE_CODE}`;
+                if (activeEPosterTrack && activeEPosterTrack !== 'ALL') {
+                    url += `&track=${encodeURIComponent(activeEPosterTrack)}`;
+                }
+                const res = await fetch(url);
+                currentEPostersCache = await res.json();
+                renderEPosters(currentEPostersCache);
+            } catch (err) {
+                console.error("Failed to load e-posters", err);
+            }
+        }
+
+        function renderEPosters(posters) {
+            const grid = document.getElementById('epostersGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            if (posters.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <div class="p-4 border border-dark bg-white" style="border-radius: 0px !important;">
+                            <i class="bi bi-file-earmark-medical text-muted" style="font-size: 2.5rem;"></i>
+                            <h5 class="fw-bold mt-2">No research abstracts found</h5>
+                            <p class="text-muted small mb-0">Try adjusting your search query or track filter.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            posters.forEach(p => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-6 col-md-12';
+                col.innerHTML = `
+                    <div class="content-card h-100 p-4 border border-dark position-relative d-flex flex-column justify-content-between" style="border-radius: 0px !important;">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-dark font-monospace px-2 py-1">${p.posterNumber}</span>
+                                <span class="badge bg-light text-primary border border-primary px-2 py-1">${p.track}</span>
+                            </div>
+                            <h5 class="fw-bold mb-2 text-dark">${p.title}</h5>
+                            <div class="small fw-bold text-dark mb-1">
+                                <i class="bi bi-person-fill text-primary me-1"></i>${p.primaryAuthor}
+                                ${p.coAuthors ? `<span class="text-muted fw-normal">(${p.coAuthors})</span>` : ''}
+                            </div>
+                            <div class="small text-muted mb-3">
+                                <i class="bi bi-hospital me-1"></i>${p.institution || 'PGIMER Chandigarh'}
+                            </div>
+                            <p class="small text-secondary mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.6;">
+                                ${p.abstractText}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top border-dark">
+                            <span class="small font-monospace text-muted">
+                                <i class="bi bi-eye me-1"></i>${p.viewCount} views
+                            </span>
+                            <button class="btn btn-sm btn-dark fw-bold px-3" onclick="openViewPosterModal(${p.id})">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> View Full Poster
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        function filterEPosters() {
+            const query = document.getElementById('eposterSearchInput').value.toLowerCase().trim();
+            const filtered = currentEPostersCache.filter(p => 
+                p.posterNumber.toLowerCase().includes(query) ||
+                p.title.toLowerCase().includes(query) ||
+                p.primaryAuthor.toLowerCase().includes(query) ||
+                (p.coAuthors && p.coAuthors.toLowerCase().includes(query)) ||
+                (p.institution && p.institution.toLowerCase().includes(query)) ||
+                p.track.toLowerCase().includes(query)
+            );
+            renderEPosters(filtered);
+        }
+
+        function selectTrackFilter(track, btn) {
+            activeEPosterTrack = track;
+            document.querySelectorAll('#eposterTrackFilters .track-btn').forEach(b => {
+                b.classList.remove('btn-dark', 'active');
+                b.classList.add('btn-outline-dark');
+            });
+            btn.classList.remove('btn-outline-dark');
+            btn.classList.add('btn-dark', 'active');
+            loadEPosters();
+        }
+
+        async function openViewPosterModal(id) {
+            try {
+                // Increment view count in backend
+                const res = await fetch(`/api/eposters/${id}/view`, { method: 'POST' });
+                const poster = await res.json();
+
+                document.getElementById('modalPosterNumber').innerText = poster.posterNumber;
+                document.getElementById('modalPosterTrack').innerText = poster.track;
+                document.getElementById('modalPosterTitle').innerText = poster.title;
+                document.getElementById('modalPosterAuthors').innerText = `${poster.primaryAuthor}${poster.coAuthors ? ' (' + poster.coAuthors + ')' : ''}`;
+                document.getElementById('modalPosterInstitution').innerText = poster.institution;
+                document.getElementById('modalPosterViews').innerText = poster.viewCount;
+                document.getElementById('modalPosterAbstract').innerText = poster.abstractText;
+
+                new bootstrap.Modal(document.getElementById('viewPosterModal')).show();
+                loadEPosters(); // refresh view count badge in background
+            } catch (err) {
+                console.error("Failed to load poster details", err);
+            }
+        }
+
+        function openAddPosterModal() {
+            document.getElementById('addPosterForm').reset();
+            new bootstrap.Modal(document.getElementById('addPosterModal')).show();
+        }
+
+        async function handlePosterSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                conferenceCode: CONFERENCE_CODE,
+                posterNumber: document.getElementById('posterNumberInput').value.trim(),
+                track: document.getElementById('posterTrackInput').value,
+                title: document.getElementById('posterTitleInput').value.trim(),
+                primaryAuthor: document.getElementById('posterAuthorInput').value.trim(),
+                coAuthors: document.getElementById('posterCoAuthorsInput').value.trim(),
+                institution: document.getElementById('posterInstitutionInput').value.trim(),
+                abstractText: document.getElementById('posterAbstractInput').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/eposters', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addPosterModal')).hide();
+                    Swal.fire('Submitted!', 'Scientific E-Poster has been added to the gallery.', 'success');
+                    loadEPosters();
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not submit poster', 'error');
             }
         }
     </script>

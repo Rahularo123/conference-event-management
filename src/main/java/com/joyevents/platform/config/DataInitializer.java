@@ -5,6 +5,7 @@ import com.joyevents.platform.model.Checkpoint;
 import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.ConferenceRoom;
 import com.joyevents.platform.model.Delegate;
+import com.joyevents.platform.model.EPoster;
 import com.joyevents.platform.model.PrivilegeSession;
 import com.joyevents.platform.model.User;
 import com.joyevents.platform.repository.CategoryRuleRepository;
@@ -12,6 +13,7 @@ import com.joyevents.platform.repository.CheckpointRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.ConferenceRoomRepository;
 import com.joyevents.platform.repository.DelegateRepository;
+import com.joyevents.platform.repository.EPosterRepository;
 import com.joyevents.platform.repository.PrivilegeSessionRepository;
 import com.joyevents.platform.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -29,6 +31,7 @@ public class DataInitializer implements CommandLineRunner {
     private final CheckpointRepository checkpointRepository;
     private final ConferenceRoomRepository roomRepository;
     private final PrivilegeSessionRepository privilegeSessionRepository;
+    private final EPosterRepository ePosterRepository;
 
     public DataInitializer(ConferenceRepository conferenceRepository,
                            CategoryRuleRepository categoryRuleRepository,
@@ -36,7 +39,8 @@ public class DataInitializer implements CommandLineRunner {
                            UserRepository userRepository,
                            CheckpointRepository checkpointRepository,
                            ConferenceRoomRepository roomRepository,
-                           PrivilegeSessionRepository privilegeSessionRepository) {
+                           PrivilegeSessionRepository privilegeSessionRepository,
+                           EPosterRepository ePosterRepository) {
         this.conferenceRepository = conferenceRepository;
         this.categoryRuleRepository = categoryRuleRepository;
         this.delegateRepository = delegateRepository;
@@ -44,6 +48,7 @@ public class DataInitializer implements CommandLineRunner {
         this.checkpointRepository = checkpointRepository;
         this.roomRepository = roomRepository;
         this.privilegeSessionRepository = privilegeSessionRepository;
+        this.ePosterRepository = ePosterRepository;
     }
 
     @Override
@@ -142,6 +147,44 @@ public class DataInitializer implements CommandLineRunner {
             privilegeSessionRepository.save(new PrivilegeSession(
                     "PHO26", "Gala Banquet Dinner", "BANQUET", 2,
                     day1.plusDays(1).atTime(19, 30), day1.plusDays(1).atTime(23, 30), "Faculty,VIP"
+            ));
+        }
+        if (ePosterRepository.count() == 0) {
+            ePosterRepository.save(new EPoster(
+                    "PHO26", "EP-101",
+                    "Targeted Immunotherapy with Blinatumomab in Relapsed / Refractory Pediatric B-Cell ALL: Real-World Experience from North India",
+                    "Dr. Ananya Ray", "Dr. Aditya Sharma, Dr. Deepak Bansal",
+                    "Advanced Pediatric Centre (APC), PGIMER Chandigarh",
+                    "Pediatric Leukemia",
+                    "Background: Relapsed B-cell Acute Lymphoblastic Leukemia carries poor outcomes in resource-limited settings. Methods: A retrospective observational study of 24 pediatric patients treated between 2022-2025. Results: Complete molecular remission achieved in 75% of patients with manageable neurotoxicity. Conclusion: Blinatumomab serves as a safe and effective bridge to allogeneic hematopoietic stem cell transplantation.",
+                    "/posters/ep101.pdf"
+            ));
+            ePosterRepository.save(new EPoster(
+                    "PHO26", "EP-102",
+                    "Evaluating Haploidentical Stem Cell Transplantation with Post-Transplant Cyclophosphamide in High-Risk Pediatric Solid Tumors",
+                    "Dr. Rajesh Kheterpal", "Dr. Sunita Verma, Dr. Amita Trehan",
+                    "Department of Medical Oncology, AIIMS New Delhi",
+                    "Stem Cell Transplant",
+                    "Background: Haploidentical donor availability expands BMT access for children lacking HLA-matched siblings. Methods: 18 consecutive pediatric patients undergoing T-replete haploidentical SCT with PTCy. Results: 1-year overall survival was 68% with low incidence of severe acute GVHD (Grade III-IV: 11%). Conclusion: PTCy-based haploidentical SCT is viable and cost-effective in developing healthcare systems.",
+                    "/posters/ep102.pdf"
+            ));
+            ePosterRepository.save(new EPoster(
+                    "PHO26", "EP-103",
+                    "High-Resolution Multiparametric Flow Cytometry for Minimal Residual Disease (MRD) Detection in Pediatric AML",
+                    "Dr. Priya Nair", "Dr. Manupriya Sharma, Dr. Reena Das",
+                    "Department of Hematology, PGIMER Chandigarh",
+                    "Diagnostics & Flow Cytometry",
+                    "Background: MRD assessment at end of induction is a key prognostic determinant in Acute Myeloid Leukemia. Methods: 10-color flow cytometric MRD analysis on bone marrow aspirates of 50 pediatric AML cases. Results: Patients with MRD <0.1% demonstrated significantly higher event-free survival (78% vs 32%, p<0.001). Conclusion: Routine 10-color MFC MRD is critical for risk-stratified therapy.",
+                    "/posters/ep103.pdf"
+            ));
+            ePosterRepository.save(new EPoster(
+                    "PHO26", "EP-104",
+                    "Multimodal Management of Metastatic Neuroblastoma: A Single-Center Decade Analysis of 112 Patients",
+                    "Dr. Vikramaditya Sen", "Dr. Aditya Sharma, Dr. Sunita Verma",
+                    "Tata Memorial Centre, Mumbai",
+                    "Solid Tumors",
+                    "Background: High-risk neuroblastoma remains one of the greatest challenges in pediatric oncology. Methods: Analysis of intensive induction chemotherapy, surgical resection, autologous BMT, and 131I-mIBG therapy. Results: 5-year overall survival reached 46% with dose-dense regimens. Conclusion: Aggressive multimodality approach improves outcomes in stage 4 metastatic disease.",
+                    "/posters/ep104.pdf"
             ));
         }
     }
