@@ -3,11 +3,13 @@ package com.joyevents.platform.config;
 import com.joyevents.platform.model.CategoryRule;
 import com.joyevents.platform.model.Checkpoint;
 import com.joyevents.platform.model.Conference;
+import com.joyevents.platform.model.ConferenceRoom;
 import com.joyevents.platform.model.Delegate;
 import com.joyevents.platform.model.User;
 import com.joyevents.platform.repository.CategoryRuleRepository;
 import com.joyevents.platform.repository.CheckpointRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
+import com.joyevents.platform.repository.ConferenceRoomRepository;
 import com.joyevents.platform.repository.DelegateRepository;
 import com.joyevents.platform.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -23,17 +25,20 @@ public class DataInitializer implements CommandLineRunner {
     private final DelegateRepository delegateRepository;
     private final UserRepository userRepository;
     private final CheckpointRepository checkpointRepository;
+    private final ConferenceRoomRepository roomRepository;
 
     public DataInitializer(ConferenceRepository conferenceRepository,
                            CategoryRuleRepository categoryRuleRepository,
                            DelegateRepository delegateRepository,
                            UserRepository userRepository,
-                           CheckpointRepository checkpointRepository) {
+                           CheckpointRepository checkpointRepository,
+                           ConferenceRoomRepository roomRepository) {
         this.conferenceRepository = conferenceRepository;
         this.categoryRuleRepository = categoryRuleRepository;
         this.delegateRepository = delegateRepository;
         this.userRepository = userRepository;
         this.checkpointRepository = checkpointRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -102,6 +107,10 @@ public class DataInitializer implements CommandLineRunner {
         delegateRepository.save(doc1);
         delegateRepository.save(doc2);
         delegateRepository.save(doc3);
+
+        // 8. Sample Conference Halls (with Configurable CME Credits)
+        roomRepository.save(new ConferenceRoom("PHO26", "Bhargava Auditorium (Main Hall)", 350, "Keynote: Pediatric Leukemia Frontiers", 1.5));
+        roomRepository.save(new ConferenceRoom("PHO26", "Lecture Hall B (Workshops)", 120, "Hands-on: Flow Cytometry Data Analysis", 2.0));
 
         System.out.println(">>> [Joy Events] Seeding completed with dynamic checkpoints!");
     }

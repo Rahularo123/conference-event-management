@@ -22,15 +22,23 @@ public class ConferenceRoom {
     @Column(length = 200)
     private String currentSession; // e.g. "Keynote: Pediatric Leukemia Frontiers"
 
+    @Column(nullable = false)
+    private Double cmeCredits = 1.5; // Configurable CME credits per session in this room (default 1.5)
+
     private boolean active = true;
 
     public ConferenceRoom() {}
 
     public ConferenceRoom(String conferenceCode, String name, int capacity, String currentSession) {
+        this(conferenceCode, name, capacity, currentSession, 1.5);
+    }
+
+    public ConferenceRoom(String conferenceCode, String name, int capacity, String currentSession, Double cmeCredits) {
         this.conferenceCode = conferenceCode;
         this.name = name;
         this.capacity = capacity;
         this.currentSession = currentSession;
+        this.cmeCredits = cmeCredits != null ? cmeCredits : 1.5;
         this.active = true;
     }
 
@@ -49,6 +57,9 @@ public class ConferenceRoom {
 
     public String getCurrentSession() { return currentSession; }
     public void setCurrentSession(String currentSession) { this.currentSession = currentSession; }
+
+    public Double getCmeCredits() { return cmeCredits; }
+    public void setCmeCredits(Double cmeCredits) { this.cmeCredits = cmeCredits; }
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }

@@ -2,8 +2,10 @@ package com.joyevents.platform.controller;
 
 import com.joyevents.platform.model.CategoryRule;
 import com.joyevents.platform.model.CertificateRecord;
+import com.joyevents.platform.model.CertificateTemplate;
 import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.Delegate;
+import com.joyevents.platform.model.RoomEntry;
 import com.joyevents.platform.repository.CategoryRuleRepository;
 import com.joyevents.platform.repository.CertificateRecordRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
@@ -110,8 +112,14 @@ public class CertificateController {
         CertificateRecord record = certificateService.getOrCreateCertificate(delegate, "PARTICIPATION");
 
         // Calculate verified CME scientific sessions attended from auditorium door scans
-        int cmeSessionsAttended = roomEntryRepository.findByDelegateOrderByScannedAtDesc(delegate).size();
-        double cmeCreditHours = Math.round(cmeSessionsAttended * 1.5 * 10.0) / 10.0; // 1.5 CME credits per lecture
+        List<RoomEntry> roomEntries = roomEntryRepository.findByDelegateOrderByScannedAtDesc(delegate);
+        int cmeSessionsAttended = roomEntries.size();
+        double cmeCreditHours = roomEntries.stream()
+                .mapToDouble(entry -> (entry.getRoom() != null && entry.getRoom().getCmeCredits() != null)
+                        ? entry.getRoom().getCmeCredits()
+                        : 1.5)
+                .sum();
+        cmeCreditHours = Math.round(cmeCreditHours * 10.0) / 10.0;
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -157,5 +165,24 @@ public class CertificateController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .contentLength(pdfBytes.length)
                 .body(pdfBytes);
+    }
+
+        /**
+     * 3. GET /api/certificate/template?conferenceCode=PHO26
+     * Retrieves the visual coordinate template for this conference.
+     */
+    @GetMapping("/template")
+    public ResponseEntity<CertificateTemplate> getTemplate(
+            @RequestParam(defaultValue = "PHO26") String conferenceCode) {
+        return ResponseEntity.ok(certificateService.getTemplate(conferenceCode));
+    }
+
+    /**
+     * 4. POST /api/certificate/template
+     * Saves updated X, Y coordinate positioning and font sizes.
+     */
+    @PostMapping("/template")
+    public ResponseEntity<CertificateTemplate> saveTemplate(@RequestBody CertificateTemplate template) {
+        return ResponseEntity.ok(certificateService.saveTemplate(template));
     }
 }
