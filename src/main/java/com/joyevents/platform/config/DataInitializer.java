@@ -5,12 +5,14 @@ import com.joyevents.platform.model.Checkpoint;
 import com.joyevents.platform.model.Conference;
 import com.joyevents.platform.model.ConferenceRoom;
 import com.joyevents.platform.model.Delegate;
+import com.joyevents.platform.model.PrivilegeSession;
 import com.joyevents.platform.model.User;
 import com.joyevents.platform.repository.CategoryRuleRepository;
 import com.joyevents.platform.repository.CheckpointRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.ConferenceRoomRepository;
 import com.joyevents.platform.repository.DelegateRepository;
+import com.joyevents.platform.repository.PrivilegeSessionRepository;
 import com.joyevents.platform.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -26,24 +28,28 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final CheckpointRepository checkpointRepository;
     private final ConferenceRoomRepository roomRepository;
+    private final PrivilegeSessionRepository privilegeSessionRepository;
 
     public DataInitializer(ConferenceRepository conferenceRepository,
                            CategoryRuleRepository categoryRuleRepository,
                            DelegateRepository delegateRepository,
                            UserRepository userRepository,
                            CheckpointRepository checkpointRepository,
-                           ConferenceRoomRepository roomRepository) {
+                           ConferenceRoomRepository roomRepository,
+                           PrivilegeSessionRepository privilegeSessionRepository) {
         this.conferenceRepository = conferenceRepository;
         this.categoryRuleRepository = categoryRuleRepository;
         this.delegateRepository = delegateRepository;
         this.userRepository = userRepository;
         this.checkpointRepository = checkpointRepository;
         this.roomRepository = roomRepository;
+        this.privilegeSessionRepository = privilegeSessionRepository;
     }
 
     @Override
     public void run(String... args) {
         if (conferenceRepository.count() > 0) {
+            seedRoomsAndPrivilegesIfEmpty();
             return;
         }
 
@@ -109,9 +115,34 @@ public class DataInitializer implements CommandLineRunner {
         delegateRepository.save(doc3);
 
         // 8. Sample Conference Halls (with Configurable CME Credits)
-        roomRepository.save(new ConferenceRoom("PHO26", "Bhargava Auditorium (Main Hall)", 350, "Keynote: Pediatric Leukemia Frontiers", 1.5));
-        roomRepository.save(new ConferenceRoom("PHO26", "Lecture Hall B (Workshops)", 120, "Hands-on: Flow Cytometry Data Analysis", 2.0));
+        seedRoomsAndPrivilegesIfEmpty();
 
         System.out.println(">>> [Joy Events] Seeding completed with dynamic checkpoints!");
+    }
+
+    private void seedRoomsAndPrivilegesIfEmpty() {
+        if (roomRepository.count() == 0) {
+            roomRepository.save(new ConferenceRoom("PHO26", "Bhargava Auditorium (Main Hall)", 350, "Keynote: Pediatric Leukemia Frontiers", 1.5));
+            roomRepository.save(new ConferenceRoom("PHO26", "Lecture Hall B (Workshops)", 120, "Hands-on: Flow Cytometry Data Analysis", 2.0));
+        }
+        if (privilegeSessionRepository.count() == 0) {
+            LocalDate day1 = LocalDate.of(2026, 10, 23);
+            privilegeSessionRepository.save(new PrivilegeSession(
+                    "PHO26", "Day 1 - Lunch", "FOOD", 1,
+                    day1.atTime(12, 0), day1.atTime(16, 0), ""
+            ));
+            privilegeSessionRepository.save(new PrivilegeSession(
+                    "PHO26", "Day 2 - Lunch", "FOOD", 2,
+                    day1.plusDays(1).atTime(12, 0), day1.plusDays(1).atTime(16, 0), ""
+            ));
+            privilegeSessionRepository.save(new PrivilegeSession(
+                    "PHO26", "Conference Kit Bag", "KIT", 1,
+                    day1.atTime(8, 0), day1.atTime(20, 0), ""
+            ));
+            privilegeSessionRepository.save(new PrivilegeSession(
+                    "PHO26", "Gala Banquet Dinner", "BANQUET", 2,
+                    day1.plusDays(1).atTime(19, 30), day1.plusDays(1).atTime(23, 30), "Faculty,VIP"
+            ));
+        }
     }
 }

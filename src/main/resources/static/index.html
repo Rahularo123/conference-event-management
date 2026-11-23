@@ -389,9 +389,32 @@
                     </a>
                 </li>
                 <li>
-                    <a class="sidebar-link" onclick="window.open('/scanner.html', '_blank')">
+                    <a class="sidebar-link" id="nav-rooms" onclick="switchNav('rooms')">
+                        <i class="bi bi-door-open-fill"></i>
+                        <span>Room / Hall Scanner</span>
+                        <span class="sidebar-badge bg-primary">CME</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="window.open('/scan/PHO26', '_blank')">
                         <i class="bi bi-qr-code-scan"></i>
                         <span>Counter Scanner</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="openCalibrateModal('PHO26-0001', 'Dr. Aditya Sharma', 'Faculty')">
+                        <i class="bi bi-printer-fill"></i>
+                        <span>Badge Calibration (4×6)</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title mt-4">Conference Setup</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="sidebar-link" id="nav-privileges" onclick="switchNav('privileges')">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Privilege Windows</span>
                     </a>
                 </li>
                 <li>
@@ -633,6 +656,120 @@
                                 <tfoot id="matrixTableFoot" class="table-light fw-bold">
                                     <!-- Headcount Totals Row -->
                                 </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 4. ROOM & CME HALL SCANNER SECTION (roomEntry.php) ── -->
+                <div id="roomsSection" style="display: none;">
+                    <div class="row g-4 mb-4">
+                        <!-- Left: Live Hall Occupancy & Scanner -->
+                        <div class="col-lg-5">
+                            <div class="content-card">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-door-open-fill me-2 text-primary"></i>Auditorium Door Scanner</h5>
+                                
+                                <!-- Hall Dropdown -->
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Select Active Hall / Room:</label>
+                                    <select id="roomSelector" class="form-select border-dark fw-bold" onchange="onRoomChanged()">
+                                        <option value="">Loading halls...</option>
+                                    </select>
+                                </div>
+
+                                <!-- Current Lecture Info & Capacity Progress -->
+                                <div class="p-3 bg-light border border-dark mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted text-uppercase fw-bold">Active Lecture:</small>
+                                        <span id="roomCmeBadge" class="badge bg-info-subtle text-info border border-info fw-bold">1.5 CME Credits</span>
+                                    </div>
+                                    <h6 id="roomSessionTitle" class="fw-bold mb-2">Keynote: Pediatric Leukemia Frontiers</h6>
+                                    
+                                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                                        <span>Seating Occupancy:</span>
+                                        <span id="roomOccupancyCount">0 / 350 Seats (0%)</span>
+                                    </div>
+                                    <div class="progress border border-dark" style="height: 12px; border-radius: 0px !important;">
+                                        <div id="roomOccupancyBar" class="progress-bar bg-success" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Badge Entry Input -->
+                                <div class="mb-2">
+                                    <label class="form-label small fw-bold">Scan Badge QR or Enter Reg ID:</label>
+                                    <div class="input-group">
+                                        <input type="text" id="roomScanInput" class="form-control border-dark font-monospace text-uppercase" 
+                                               placeholder="e.g. PHO26-0001" onkeypress="if(event.key==='Enter') submitRoomScan()">
+                                        <button class="btn btn-dark fw-bold" onclick="submitRoomScan()">
+                                            <i class="bi bi-check-lg me-1"></i> Check In
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="roomScanFeedback" class="small mt-2" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Live Door Entry Activity Feed -->
+                        <div class="col-lg-7">
+                            <div class="content-card">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold mb-0"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Live Door Entry Feed</h5>
+                                    <button class="btn btn-sm btn-outline-dark" onclick="refreshRoomStatus()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                    </button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Reg ID</th>
+                                                <th>Doctor Name</th>
+                                                <th>Category</th>
+                                                <th>Lecture Attended</th>
+                                                <th>Check-in Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="roomEntryFeedBody">
+                                            <tr><td colspan="5" class="text-center py-4 text-muted">No door scans recorded yet for this session.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 5. PRIVILEGE & MEAL TIME WINDOWS (privilagesetup.php) ── -->
+                <div id="privilegesSection" style="display: none;">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h4 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Meal & Privilege Time Windows</h4>
+                                <small class="text-muted">Configure active time slots, anti-passback rules, and eligible categories</small>
+                            </div>
+                            <button class="btn btn-sm btn-custom-primary" onclick="openAddPrivilegeModal()">
+                                <i class="bi bi-plus-lg me-1"></i> Add New Session
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Session / Meal Name</th>
+                                        <th>Type</th>
+                                        <th>Day</th>
+                                        <th>Time Window</th>
+                                        <th>Eligible Categories</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="privilegesTableBody">
+                                    <tr><td colspan="7" class="text-center py-4 text-muted">Loading privilege sessions...</td></tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -924,6 +1061,64 @@
         </div>
     </div>
 
+    <!-- ADD PRIVILEGE SESSION MODAL (privilagesetup.php) -->
+    <div class="modal fade" id="addPrivilegeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Configure Meal / Privilege Session</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="privilegeForm" onsubmit="handlePrivilegeSubmit(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Session Name</label>
+                            <input type="text" class="form-control" id="privName" placeholder="e.g. Day 1 Lunch Buffet, Gala Dinner" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Privilege Type</label>
+                                <select class="form-select" id="privType" required>
+                                    <option value="FOOD">Food / Meal</option>
+                                    <option value="KIT">Kit Bag Collection</option>
+                                    <option value="WORKSHOP">Workshop</option>
+                                    <option value="BANQUET">Gala Dinner / Banquet</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Day Number</label>
+                                <select class="form-select" id="privDay" required>
+                                    <option value="1">Day 1</option>
+                                    <option value="2">Day 2</option>
+                                    <option value="3">Day 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Start Time</label>
+                                <input type="time" class="form-control" id="privStartTime" value="12:30" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">End Time</label>
+                                <input type="time" class="form-control" id="privEndTime" value="14:30" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Allowed Categories (Leave blank for all)</label>
+                            <input type="text" class="form-control" id="privAllowedCategories" placeholder="e.g. Faculty, Delegate, VIP">
+                            <small class="text-muted">Comma-separated attendee categories eligible for this privilege.</small>
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-custom-primary">Save Session</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -948,10 +1143,14 @@
             const attendeesSection = document.getElementById('attendeesSection');
             const attendanceSection = document.getElementById('attendanceSection');
             const matrixSection = document.getElementById('matrixSection');
+            const roomsSection = document.getElementById('roomsSection');
+            const privilegesSection = document.getElementById('privilegesSection');
 
-            attendeesSection.style.display = 'none';
-            attendanceSection.style.display = 'none';
+            if (attendeesSection) attendeesSection.style.display = 'none';
+            if (attendanceSection) attendanceSection.style.display = 'none';
             if (matrixSection) matrixSection.style.display = 'none';
+            if (roomsSection) roomsSection.style.display = 'none';
+            if (privilegesSection) privilegesSection.style.display = 'none';
 
             if (viewName === 'attendees') {
                 document.getElementById('nav-attendees').classList.add('active');
@@ -966,6 +1165,14 @@
                 document.getElementById('nav-matrix').classList.add('active');
                 if (matrixSection) matrixSection.style.display = 'block';
                 loadMatrixReport();
+            } else if (viewName === 'rooms') {
+                document.getElementById('nav-rooms').classList.add('active');
+                if (roomsSection) roomsSection.style.display = 'block';
+                loadRooms();
+            } else if (viewName === 'privileges') {
+                document.getElementById('nav-privileges').classList.add('active');
+                if (privilegesSection) privilegesSection.style.display = 'block';
+                loadPrivilegeSessions();
             }
         }
 
@@ -1485,6 +1692,233 @@
 
         function exportMatrixCsv() {
             window.location.href = `/api/reports/matrix/export?conferenceCode=${CONFERENCE_CODE}`;
+        }
+
+        // ── 6. ROOM & CME HALL SCANNING LOGIC (roomEntry.php) ──
+        let conferenceRoomsCache = [];
+        let activeRoomId = null;
+
+        async function loadRooms() {
+            try {
+                const res = await fetch(`/api/rooms?conferenceCode=${CONFERENCE_CODE}`);
+                conferenceRoomsCache = await res.json();
+                
+                const select = document.getElementById('roomSelector');
+                select.innerHTML = '';
+
+                if (conferenceRoomsCache.length === 0) {
+                    select.innerHTML = '<option value="">No halls configured</option>';
+                    return;
+                }
+
+                conferenceRoomsCache.forEach((r, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = r.id;
+                    opt.innerText = `${r.name} (Cap: ${r.capacity})`;
+                    if (idx === 0) opt.selected = true;
+                    select.appendChild(opt);
+                });
+
+                activeRoomId = conferenceRoomsCache[0].id;
+                refreshRoomStatus();
+            } catch (err) {
+                console.error("Failed to load rooms", err);
+            }
+        }
+
+        function onRoomChanged() {
+            activeRoomId = document.getElementById('roomSelector').value;
+            refreshRoomStatus();
+        }
+
+        async function refreshRoomStatus() {
+            if (!activeRoomId) return;
+            try {
+                const res = await fetch(`/api/rooms/${activeRoomId}/status`);
+                const status = await res.json();
+
+                document.getElementById('roomSessionTitle').innerText = status.currentSession || 'General Session';
+                document.getElementById('roomOccupancyCount').innerText = `${status.currentOccupancy} / ${status.capacity} Seats (${status.occupancyPercentage}%)`;
+                
+                const bar = document.getElementById('roomOccupancyBar');
+                bar.style.width = status.occupancyPercentage + '%';
+                bar.className = status.occupancyPercentage > 85 ? 'progress-bar bg-danger' : 
+                                status.occupancyPercentage > 60 ? 'progress-bar bg-warning' : 'progress-bar bg-success';
+
+            } catch (err) {
+                console.error("Failed to refresh room status", err);
+            }
+        }
+
+        async function submitRoomScan() {
+            const val = document.getElementById('roomScanInput').value.trim();
+            const feedback = document.getElementById('roomScanFeedback');
+            if (!val || !activeRoomId) return;
+
+            feedback.style.display = 'block';
+            feedback.className = 'small mt-2 text-muted';
+            feedback.innerText = 'Verifying badge...';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('qrOrRegId', val);
+                params.append('scanType', 'ENTRY');
+                params.append('operatorUsername', 'desk_operator');
+
+                const res = await fetch(`/api/rooms/${activeRoomId}/scan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    feedback.className = 'small mt-2 p-2 bg-success-subtle text-success border border-success fw-bold';
+                    feedback.innerHTML = `✓ ${data.delegateName} (${data.registrationId}) - ${data.message}`;
+                    
+                    // Add to live feed
+                    const tbody = document.getElementById('roomEntryFeedBody');
+                    if (tbody.innerHTML.includes('No door scans')) tbody.innerHTML = '';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="fw-bold font-monospace">${data.registrationId}</td>
+                        <td class="fw-bold">${data.delegateName}</td>
+                        <td><span class="badge bg-light text-dark border">ATTENDEE</span></td>
+                        <td><small class="text-muted">${data.sessionName}</small></td>
+                        <td class="text-success fw-bold">${data.timestamp}</td>
+                    `;
+                    tbody.insertBefore(tr, tbody.firstChild);
+                    refreshRoomStatus();
+                } else {
+                    feedback.className = 'small mt-2 p-2 bg-danger-subtle text-danger border border-danger fw-bold';
+                    feedback.innerHTML = `✗ ${data.message}`;
+                }
+            } catch (err) {
+                feedback.className = 'small mt-2 text-danger fw-bold';
+                feedback.innerText = 'Network error checking in.';
+            }
+
+            document.getElementById('roomScanInput').value = '';
+            document.getElementById('roomScanInput').focus();
+        }
+
+        // ── 7. PRIVILEGE & MEAL WINDOW SETUP LOGIC (privilagesetup.php) ──
+        let privilegeSessionsCache = [];
+
+        async function loadPrivilegeSessions() {
+            try {
+                const res = await fetch(`/api/privileges?conferenceCode=${CONFERENCE_CODE}`);
+                privilegeSessionsCache = await res.json();
+                renderPrivilegesTable(privilegeSessionsCache);
+            } catch (err) {
+                console.error("Failed to load privilege sessions", err);
+            }
+        }
+
+        function renderPrivilegesTable(sessions) {
+            const tbody = document.getElementById('privilegesTableBody');
+            tbody.innerHTML = '';
+
+            if (sessions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No privilege sessions configured yet.</td></tr>';
+                return;
+            }
+
+            sessions.forEach(s => {
+                const start = s.startTime ? new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+                const end = s.endTime ? new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+                const icon = s.privilegeType === 'KIT' ? '🎒' : s.privilegeType === 'WORKSHOP' ? '🔬' : '🍽️';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${icon} ${s.name}</td>
+                    <td><span class="badge bg-light text-dark border">${s.privilegeType}</span></td>
+                    <td>Day ${s.dayNumber || 1}</td>
+                    <td class="font-monospace small">${start} - ${end}</td>
+                    <td>${s.allowedCategories ? `<span class="badge bg-light text-primary border">${s.allowedCategories}</span>` : '<span class="text-muted small">All Attendees</span>'}</td>
+                    <td>
+                        <button class="btn btn-sm ${s.active ? 'btn-success' : 'btn-outline-secondary'}" onclick="togglePrivilegeActive(${s.id})">
+                            <i class="bi ${s.active ? 'bi-toggle-on' : 'bi-toggle-off'} me-1"></i> ${s.active ? 'Active' : 'Paused'}
+                        </button>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deletePrivilege(${s.id}, '${s.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAddPrivilegeModal() {
+            document.getElementById('privilegeForm').reset();
+            new bootstrap.Modal(document.getElementById('addPrivilegeModal')).show();
+        }
+
+        async function handlePrivilegeSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('privName').value.trim();
+            const type = document.getElementById('privType').value;
+            const day = parseInt(document.getElementById('privDay').value);
+            const startTimeStr = document.getElementById('privStartTime').value;
+            const endTimeStr = document.getElementById('privEndTime').value;
+            const allowed = document.getElementById('privAllowedCategories').value.trim();
+
+            const dates = { 1: '2026-10-23', 2: '2026-10-24', 3: '2026-10-25' };
+            const dateStr = dates[day] || '2026-10-23';
+
+            const payload = {
+                conferenceCode: CONFERENCE_CODE,
+                name: name,
+                privilegeType: type,
+                dayNumber: day,
+                startTime: `${dateStr}T${startTimeStr}:00`,
+                endTime: `${dateStr}T${endTimeStr}:00`,
+                allowedCategories: allowed,
+                active: true
+            };
+
+            try {
+                const res = await fetch('/api/privileges', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addPrivilegeModal')).hide();
+                    Swal.fire('Saved!', `Session "${name}" is now active.`, 'success');
+                    loadPrivilegeSessions();
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not save session', 'error');
+            }
+        }
+
+        async function togglePrivilegeActive(id) {
+            try {
+                await fetch(`/api/privileges/${id}/toggle`, { method: 'PUT' });
+                loadPrivilegeSessions();
+            } catch (err) {
+                console.error("Toggle error", err);
+            }
+        }
+
+        async function deletePrivilege(id, name) {
+            const confirm = await Swal.fire({
+                title: 'Delete Session?',
+                text: `Remove "${name}"? Past redemption logs will remain intact.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, Delete'
+            });
+
+            if (confirm.isConfirmed) {
+                await fetch(`/api/privileges/${id}`, { method: 'DELETE' });
+                loadPrivilegeSessions();
+                Swal.fire('Deleted!', 'Session removed.', 'success');
+            }
         }
     </script>
 </body>
