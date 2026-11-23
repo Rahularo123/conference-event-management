@@ -4,337 +4,228 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joy Events - Digital Certificate Portal</title>
-    <!-- Bootstrap 5 CSS -->
+    
+    <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --primary-navy: #070b14;
-            --accent-gold: #d4af37;
-            --dark-card: rgba(15, 23, 42, 0.78);
-            --dark-border: rgba(255, 255, 255, 0.08);
-            --dark-border-hover: rgba(212, 175, 55, 0.35);
+        /* Strict Sharp Edges (No curvy boxes) */
+        * {
+            border-radius: 0px !important;
+            box-sizing: border-box;
         }
 
-        * { box-sizing: border-box; }
+        :root {
+            --primary-navy: #0f172a;
+            --accent-blue: #0284c7;
+            --accent-gold: #b45309;
+            --bg-light: #f8fafc;
+            --border-dark: #334155;
+            --border-light: #e2e8f0;
+        }
 
         body {
-            background-color: #070b14;
-            background-image: 
-                radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
-            background-attachment: fixed;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #f1f5f9;
+            background-color: var(--bg-light);
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: #0f172a;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            letter-spacing: -0.2px;
         }
 
-        /* ── NAVBAR ── */
+        /* Top Header */
         .cert-navbar {
-            background: rgba(7, 11, 20, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--dark-border);
-            padding: 0.9rem 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            border-bottom: 2px solid #0f172a;
+            padding: 0.9rem 1.5rem;
         }
 
         .navbar-brand {
             font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #ffffff !important;
-            font-size: 1.25rem;
+            color: #0f172a !important;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
         }
 
-        /* ── SEARCH CARD ── */
-        .cert-card {
-            background: var(--dark-card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--dark-border);
-            border-radius: 24px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
-            transition: all 0.3s ease;
+        /* Search & Result Cards */
+        .sharp-card {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
         }
 
-        .cert-card:hover {
-            border-color: var(--dark-border-hover);
-        }
-
-        .cert-card h2 {
-            color: #ffffff;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .cert-card p.text-muted {
-            color: #94a3b8 !important;
-            font-size: 0.9rem;
-        }
-
-        .gold-ribbon {
-            background: linear-gradient(135deg, #d4af37 0%, #fef08a 50%, #b45309 100%);
-            color: #0f172a;
-            font-size: 0.72rem;
-            letter-spacing: 1.5px;
-            padding: 5px 16px;
-            border-radius: 20px;
-            font-weight: 800;
-            display: inline-block;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-
-        /* ── INPUTS ── */
-        .form-label {
-            color: #cbd5e1 !important;
-            font-weight: 600;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        /* Form Controls */
         .form-control, .form-select {
-            background: rgba(8, 12, 22, 0.85) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-            color: #ffffff !important;
-            border-radius: 14px;
-            padding: 0.85rem 1.1rem;
+            background: #ffffff !important;
+            border: 1px solid #0f172a !important;
+            color: #0f172a !important;
+            padding: 0.75rem 1rem;
             font-size: 0.95rem;
-            transition: all 0.2s;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #d4af37 !important;
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2) !important;
-            color: #ffffff !important;
+            box-shadow: none !important;
+            border-color: #0284c7 !important;
         }
 
-        .input-group-text {
-            background: rgba(8, 12, 22, 0.85) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-            border-right: none !important;
-            color: #64748b !important;
-            border-radius: 14px 0 0 14px;
+        .btn-custom-dark {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 700;
+            border: 1px solid #0f172a;
+            padding: 0.75rem 1.25rem;
         }
 
-        .form-text {
-            color: #64748b !important;
-            font-size: 0.8rem;
-        }
-
-        /* ── BUTTONS ── */
-        .btn-primary {
-            background: linear-gradient(135deg, #d4af37 0%, #ca8a04 100%);
-            color: #0f172a;
-            font-weight: 800;
-            border: none;
-            border-radius: 14px;
-            padding: 0.9rem;
-            letter-spacing: 0.3px;
-            box-shadow: 0 6px 20px -3px rgba(212, 175, 55, 0.4);
-            transition: all 0.25s cubic-bezier(.4,0,.2,1);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -2px rgba(212, 175, 55, 0.5);
-            background: linear-gradient(135deg, #facc15 0%, #d4af37 100%);
-            color: #000;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: none;
-            border-radius: 14px;
-            font-weight: 800;
-            padding: 0.9rem;
-            letter-spacing: 0.3px;
-            box-shadow: 0 6px 20px -3px rgba(16, 185, 129, 0.4);
-            transition: all 0.25s;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -2px rgba(16, 185, 129, 0.5);
-        }
-
-        .btn-outline-secondary {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            color: #cbd5e1;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-
-        .btn-outline-secondary:hover {
-            background: rgba(51, 65, 85, 0.7);
+        .btn-custom-dark:hover {
+            background: #1e293b;
             color: #ffffff;
         }
 
-        /* ── CERTIFICATE PREVIEW PARCHMENT ── */
-        .cert-preview-box {
-            background: #ffffff;
-            border: 4px double #d4af37;
-            border-radius: 18px;
-            padding: 42px 32px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4);
+        .btn-custom-primary {
+            background: #0284c7;
+            color: #ffffff;
+            font-weight: 700;
+            border: 1px solid #0284c7;
+            padding: 0.75rem 1.25rem;
         }
 
-        .cert-preview-box::before {
-            content: '';
-            position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 12px;
-            pointer-events: none;
+        .btn-custom-primary:hover {
+            background: #0369a1;
+            color: #ffffff;
+        }
+
+        /* Certificate Preview Parchment */
+        .cert-preview-box {
+            background: #ffffff;
+            border: 3px double #0f172a;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
         }
 
         .cert-doctor-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            color: #0f172a !important;
-            letter-spacing: 1px;
-            margin: 1rem 0;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .watermark-seal {
-            opacity: 0.04;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 13rem;
-            pointer-events: none;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
             color: #0f172a;
-        }
-
-        #resCertCode {
-            font-family: 'JetBrains Mono', monospace;
+            margin: 1rem 0 0.5rem 0;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* ── FOOTER ── */
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Footer */
         footer {
-            background: rgba(7, 11, 20, 0.8) !important;
-            border-top: 1px solid var(--dark-border) !important;
-        }
-
-        .footer-text {
-            color: #64748b;
+            background: #ffffff;
+            border-top: 1px solid var(--border-light);
+            padding: 1rem 0;
+            text-align: center;
             font-size: 0.85rem;
+            color: #64748b;
         }
-
-        /* ── ANIMATIONS ── */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .cert-card { animation: fadeInUp 0.5s cubic-bezier(.4,0,.2,1) both; }
-        #resultCard { animation: fadeInUp 0.4s cubic-bezier(.4,0,.2,1) both; }
     </style>
 </head>
 <body>
 
-    <!-- Navigation Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark cert-navbar py-3 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
-                <i class="bi bi-award text-warning fs-4"></i>
-                <span>JOY EVENTS <span class="badge bg-warning text-dark fs-6 ms-1">Certificates</span></span>
+    <!-- Top Header Bar -->
+    <nav class="cert-navbar d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-award text-primary fs-4"></i>
+            <span>JOY EVENTS <span class="badge bg-dark text-white ms-1 fw-bold">E-Certificates</span></span>
+        </a>
+        <div class="d-flex gap-2">
+            <a href="/" class="btn btn-sm btn-outline-dark fw-bold">
+                <i class="bi bi-speedometer2 me-1"></i> Dashboard
             </a>
-            <div class="d-flex gap-2">
-                <a href="/index.html" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-speedometer2 me-1"></i> Registration Desk
-                </a>
-                <a href="/scanner.html" class="btn btn-outline-info btn-sm">
-                    <i class="bi bi-qr-code-scan me-1"></i> Scanner
-                </a>
-            </div>
+            <a href="/scanner.html" class="btn btn-sm btn-outline-primary fw-bold">
+                <i class="bi bi-qr-code-scan me-1"></i> Scanner
+            </a>
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="container my-auto py-5">
         <div class="row justify-content-center">
             <div class="col-lg-7 col-md-9">
 
-                <!-- Search Card -->
-                <div class="cert-card p-4 p-md-5 mb-4">
+                <!-- 1. Search Box -->
+                <div class="sharp-card mb-4">
                     <div class="text-center mb-4">
-                        <div class="gold-ribbon mb-2 text-uppercase">Official E-Certificate Portal</div>
-                        <h2 class="fw-bold text-dark">Download Your Certificate</h2>
-                        <p class="text-muted small">Enter your Registration ID or Registered Mobile number to retrieve and download your verified Certificate of Participation.</p>
+                        <span class="badge bg-light text-dark border border-dark px-3 py-1 mb-2 fw-bold text-uppercase">
+                            Official Self-Service Portal
+                        </span>
+                        <h3 class="fw-bold text-dark mb-1">Download Your Conference Certificate</h3>
+                        <p class="text-muted small">Enter your Registration ID or Registered Mobile number to generate your verified certificate.</p>
                     </div>
 
                     <!-- Conference Selector -->
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small text-secondary">Select Conference / Event</label>
-                        <select id="conferenceSelect" class="form-select form-select-lg">
+                        <label class="form-label fw-bold small text-dark">Select Conference / Event</label>
+                        <select id="conferenceSelect" class="form-select fw-semibold">
                             <option value="">Loading events...</option>
                         </select>
                     </div>
 
-                    <!-- Reg ID or Mobile Input -->
+                    <!-- Reg ID or Mobile Search -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small text-secondary">Registration ID or Mobile Number</label>
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" id="searchTerm" class="form-control" placeholder="e.g. PHO26-0001 or 9876543210" autocomplete="off">
+                        <label class="form-label fw-bold small text-dark">Registration ID or Mobile Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-dark"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchTerm" class="form-control font-mono text-uppercase" 
+                                   placeholder="e.g. PHO26-0001 or 9876543210" autocomplete="off">
                         </div>
-                        <div class="form-text small">Tip: You can use either your printed badge ID (e.g. PHO26-0001) or your 10-digit mobile number.</div>
+                        <div class="text-muted small mt-1">Tip: Use either your printed badge ID (e.g. PHO26-0001) or your 10-digit mobile number.</div>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button id="btnSearch" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="searchCertificate()">
-                        <i class="bi bi-search me-1"></i> Search My Certificate
+                    <button id="btnSearch" class="btn btn-custom-dark w-100 fw-bold" onclick="searchCertificate()">
+                        <i class="bi bi-search me-1"></i> Verify & Retrieve Certificate
                     </button>
 
                     <!-- Alert Box -->
                     <div id="alertBox" class="alert d-none mt-3" role="alert"></div>
                 </div>
 
-                <!-- Certificate Result Card (Hidden initially) -->
-                <div id="resultCard" class="cert-card p-4 d-none">
-                    <div class="cert-preview-box text-center position-relative overflow-hidden mb-4">
-                        <i class="bi bi-shield-check watermark-seal"></i>
-
-                        <div class="gold-ribbon mb-3">JOY EVENTS VERIFIED</div>
-                        <h5 class="text-muted text-uppercase tracking-wide mb-1" style="font-size: 0.9rem; letter-spacing: 2px;">Certificate of Participation</h5>
-                        <p class="text-secondary small mb-3">This certifies that</p>
-
-                        <h3 id="resDoctorName" class="fw-bold text-dark text-uppercase mb-2 cert-doctor-name">DR. JOHN DOE</h3>
-                        <div class="mb-3">
-                            <span id="resCategoryBadge" class="badge bg-primary px-3 py-2 fs-6">Delegate</span>
+                <!-- 2. Verified Certificate Preview Card -->
+                <div id="resultCard" class="sharp-card d-none">
+                    <div class="cert-preview-box mb-4">
+                        <div class="badge bg-success-subtle text-success border border-success px-3 py-1 mb-3 fw-bold">
+                            <i class="bi bi-shield-check me-1"></i> VERIFIED ATTENDEE RECORD
                         </div>
 
-                        <p class="text-muted small mb-1">has actively attended and participated in</p>
-                        <h6 id="resConfName" class="fw-bold text-secondary mb-3">PHOCON 2026</h6>
+                        <div class="text-muted text-uppercase small fw-bold tracking-wide mb-1">Certificate of Participation</div>
+                        <p class="text-muted small mb-1">This is to proudly certify that</p>
 
-                        <div class="p-2 bg-light rounded-pill border d-inline-flex align-items-center px-3 gap-2">
+                        <div id="resDoctorName" class="cert-doctor-name">DR. ADITYA SHARMA</div>
+
+                        <div class="d-flex justify-content-center gap-2 my-2">
+                            <span id="resCategoryBadge" class="badge bg-light text-dark border fw-bold px-3 py-1">FACULTY</span>
+                            <span id="resCmeBadge" class="badge bg-info-subtle text-info border border-info fw-bold px-3 py-1">
+                                <i class="bi bi-clock-history me-1"></i> CME: 4.5 Hours (3 Lectures)
+                            </span>
+                        </div>
+
+                        <p class="text-muted small mb-1 mt-3">has actively attended scientific proceedings at</p>
+                        <h6 id="resConfName" class="fw-bold text-dark mb-3">PHOCON 2026</h6>
+
+                        <div class="p-2 bg-light border border-dark d-inline-flex align-items-center px-3 gap-2 mt-2">
                             <i class="bi bi-qr-code text-primary"></i>
-                            <span class="small text-muted">Verification Code:</span>
-                            <strong id="resCertCode" class="text-dark font-monospace small">CERT-PHO26-0001</strong>
+                            <span class="small text-muted fw-bold">Verification Code:</span>
+                            <strong id="resCertCode" class="text-dark font-mono small">CERT-PHO26-0001</strong>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
+                    <!-- Download & Reset Buttons -->
                     <div class="d-grid gap-2">
-                        <a id="btnDownloadPdf" href="#" target="_blank" class="btn btn-success btn-lg fw-bold shadow-sm">
+                        <a id="btnDownloadPdf" href="#" target="_blank" class="btn btn-custom-primary fw-bold text-center">
                             <i class="bi bi-file-earmark-pdf-fill me-2"></i> Download Official Certificate (PDF)
                         </a>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="resetSearch()">
+                        <button class="btn btn-outline-dark btn-sm fw-bold" onclick="resetSearch()">
                             <i class="bi bi-arrow-counterclockwise me-1"></i> Search Another Attendee
                         </button>
                     </div>
@@ -345,9 +236,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-top py-3 text-center mt-auto">
-        <div class="container footer-text">
-            Joy Events Conference & Catering Platform &copy; 2026. All certificates are digitally verified.
+    <footer>
+        <div class="container">
+            Joy Events Conference Management System &copy; 2026. All certificates are digitally verified.
         </div>
     </footer>
 
@@ -355,7 +246,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Load active conferences into dropdown
+        // Load conferences into dropdown
         async function loadConferences() {
             const confSelect = document.getElementById('conferenceSelect');
             try {
@@ -373,7 +264,7 @@
             } catch (err) {
                 confSelect.innerHTML = `
                     <option value="PHO26">PHOCON 2026 (PHO26)</option>
-                    <option value="PHOSS26">10th PHOSSCON 2026 (PHOSS26)</option>
+                    <option value="PHOSS">10th PHOSSCON 2026 (PHOSS)</option>
                 `;
             }
         }
@@ -395,7 +286,7 @@
             }
 
             btnSearch.disabled = true;
-            btnSearch.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Searching...`;
+            btnSearch.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Searching...`;
 
             try {
                 const res = await fetch(`/api/certificate/lookup?conferenceCode=${encodeURIComponent(confCode)}&term=${encodeURIComponent(term)}`);
@@ -413,12 +304,21 @@
                     return;
                 }
 
-                // Render Certificate Card
+                // Render Certificate Preview
                 document.getElementById('resDoctorName').innerText = data.fullName;
                 document.getElementById('resCategoryBadge').innerText = data.category;
                 document.getElementById('resConfName').innerText = data.conferenceName;
                 document.getElementById('resCertCode').innerText = data.certificateCode;
                 document.getElementById('btnDownloadPdf').href = data.downloadUrl;
+
+                // Show CME Credit Hours if available
+                const cmeBadge = document.getElementById('resCmeBadge');
+                if (data.cmeCreditHours && data.cmeCreditHours > 0) {
+                    cmeBadge.innerHTML = `<i class="bi bi-clock-history me-1"></i> CME: ${data.cmeCreditHours} Hours (${data.cmeSessionsAttended} Lectures)`;
+                    cmeBadge.style.display = 'inline-block';
+                } else {
+                    cmeBadge.style.display = 'none';
+                }
 
                 resultCard.classList.remove('d-none');
                 resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -427,13 +327,13 @@
                 showAlert('danger', 'Server connection error. Please ensure the backend is running.');
             } finally {
                 btnSearch.disabled = false;
-                btnSearch.innerHTML = `<i class="bi bi-search me-1"></i> Search My Certificate`;
+                btnSearch.innerHTML = `<i class="bi bi-search me-1"></i> Verify & Retrieve Certificate`;
             }
         }
 
         function showAlert(type, message) {
             const alertBox = document.getElementById('alertBox');
-            alertBox.className = `alert alert-${type} mt-3 d-flex align-items-center gap-2`;
+            alertBox.className = `alert alert-${type} mt-3 d-flex align-items-center gap-2 fw-bold`;
             alertBox.innerHTML = message;
             alertBox.classList.remove('d-none');
         }
@@ -445,14 +345,12 @@
             document.getElementById('searchTerm').focus();
         }
 
-        // Allow pressing "Enter" key to search
         document.getElementById('searchTerm').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchCertificate();
             }
         });
 
-        // Initialize on page load
         window.onload = loadConferences;
     </script>
 </body>

@@ -8,6 +8,7 @@ import com.joyevents.platform.repository.CategoryRuleRepository;
 import com.joyevents.platform.repository.CertificateRecordRepository;
 import com.joyevents.platform.repository.ConferenceRepository;
 import com.joyevents.platform.repository.DelegateRepository;
+import com.joyevents.platform.repository.RoomEntryRepository;
 import com.joyevents.platform.service.CertificateService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,22 +31,26 @@ public class CertificateController {
     private final DelegateRepository delegateRepository;
     private final ConferenceRepository conferenceRepository;
     private final CategoryRuleRepository categoryRuleRepository;
+    private final RoomEntryRepository roomEntryRepository;
 
     public CertificateController(CertificateService certificateService,
                                  CertificateRecordRepository certificateRecordRepository,
                                  DelegateRepository delegateRepository,
                                  ConferenceRepository conferenceRepository,
-                                 CategoryRuleRepository categoryRuleRepository) {
+                                 CategoryRuleRepository categoryRuleRepository,
+                                 RoomEntryRepository roomEntryRepository) {
         this.certificateService = certificateService;
         this.certificateRecordRepository = certificateRecordRepository;
         this.delegateRepository = delegateRepository;
         this.conferenceRepository = conferenceRepository;
         this.categoryRuleRepository = categoryRuleRepository;
+        this.roomEntryRepository = roomEntryRepository;
     }
 
     /**
      * 1. GET /api/certificate/lookup?conferenceCode=PHO26&term=PHO26-0001
      * Looks up attendee by Registration ID or registered Mobile number.
+     * Computes CME credits based on verified auditorium door scans.
      */
     @GetMapping("/lookup")
     public ResponseEntity<?> lookupCertificate(
@@ -104,6 +109,10 @@ public class CertificateController {
         // Issue or fetch existing certificate record
         CertificateRecord record = certificateService.getOrCreateCertificate(delegate, "PARTICIPATION");
 
+        // Calculate verified CME scientific sessions attended from auditorium door scans
+        int cmeSessionsAttended = roomEntryRepository.findByDelegateOrderByScannedAtDesc(delegate).size();
+        double cmeCreditHours = Math.round(cmeSessionsAttended * 1.5 * 10.0) / 10.0; // 1.5 CME credits per lecture
+
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("eligible", true);
@@ -117,6 +126,8 @@ public class CertificateController {
         response.put("certificateCode", record.getCertificateCode());
         response.put("downloadUrl", "/api/certificate/download/" + record.getCertificateCode());
         response.put("downloadedOnline", record.isDownloadedOnline());
+        response.put("cmeSessionsAttended", cmeSessionsAttended);
+        response.put("cmeCreditHours", cmeCreditHours);
 
         return ResponseEntity.ok(response);
     }
@@ -146,28 +157,5 @@ public class CertificateController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .contentLength(pdfBytes.length)
                 .body(pdfBytes);
-    }
-
-    /**
-     * 3. GET /api/certificate/verify/{certCode}
-     * Public verification endpoint when QR code on certificate is scanned.
-     */
-    @GetMapping("/verify/{certCode}")
-    public ResponseEntity<?> verifyCertificate(@PathVariable String certCode) {
-        return certificateRecordRepository.findByCertificateCode(certCode)
-                .map(c -> ResponseEntity.ok(Map.of(
-                        "valid", true,
-                        "status", c.getStatus(),
-                        "recipientName", c.getDelegate().getFullName(),
-                        "registrationId", c.getDelegate().getRegistrationId(),
-                        "category", c.getDelegate().getCategory(),
-                        "conferenceName", c.getConference().getName(),
-                        "certificateCode", c.getCertificateCode(),
-                        "issuedAt", c.getIssuedAt().toString()
-                )))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                        "valid", false,
-                        "message", "Invalid or unrecognized Certificate Code."
-                )));
     }
 }
