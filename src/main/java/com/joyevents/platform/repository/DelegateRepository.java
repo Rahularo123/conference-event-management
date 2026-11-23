@@ -27,6 +27,7 @@ public interface DelegateRepository extends JpaRepository<Delegate, Long> {
 
     // 4. List all delegates for an event in reverse order (newest first)
     List<Delegate> findByConferenceOrderByIdDesc(Conference conference);
+    List<Delegate> findByConference(Conference conference);
 
     // 5. Omni-Search bar for Registration Desk (searches Name, RegID, Mobile, Email, or Hospital)
     @Query("SELECT d FROM Delegate d WHERE d.conference = :conf AND (" +

@@ -160,6 +160,12 @@ public class CertificateController {
 
         byte[] pdfBytes = certificateService.generateCertificatePdf(cert);
 
+        // Mark delegate certificate as downloaded
+        if (cert.getDelegate() != null && !cert.getDelegate().isCertificateDownloaded()) {
+            cert.getDelegate().setCertificateDownloaded(true);
+            delegateRepository.save(cert.getDelegate());
+        }
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Certificate-" + certCode + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)

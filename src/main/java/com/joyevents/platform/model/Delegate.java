@@ -47,6 +47,9 @@ public class Delegate {
     private boolean badgePrinted = false;
     private LocalDateTime badgePrintTimestamp;
 
+    private boolean certificatePrinted = false;
+    private boolean certificateDownloaded = false;
+
     private String registrationSource = "ONSITE"; // "ONSITE", "ONLINE", "IMPORTED"
     private LocalDateTime registeredAt = LocalDateTime.now();
 
@@ -102,6 +105,12 @@ public class Delegate {
 
     public LocalDateTime getBadgePrintTimestamp() { return badgePrintTimestamp; }
     public void setBadgePrintTimestamp(LocalDateTime badgePrintTimestamp) { this.badgePrintTimestamp = badgePrintTimestamp; }
+
+    public boolean isCertificatePrinted() { return certificatePrinted; }
+    public void setCertificatePrinted(boolean certificatePrinted) { this.certificatePrinted = certificatePrinted; }
+
+    public boolean isCertificateDownloaded() { return certificateDownloaded; }
+    public void setCertificateDownloaded(boolean certificateDownloaded) { this.certificateDownloaded = certificateDownloaded; }
 
     public String getRegistrationSource() { return registrationSource; }
     public void setRegistrationSource(String registrationSource) { this.registrationSource = registrationSource; }

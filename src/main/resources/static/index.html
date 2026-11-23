@@ -461,6 +461,19 @@
 
                 <!-- ════════════ VIEW 1: MANAGE ATTENDEES (REGISTRATION DESK) ════════════ -->
                 <div id="attendeesSection">
+                    <!-- ── MULTI-CATEGORY TELEMETRY CARDS (dashboard.php Benchmark) ── -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px;">
+                                <i class="bi bi-pie-chart-fill me-1 text-primary"></i>Category Telemetry & Badge Issuance
+                            </span>
+                            <span class="badge bg-light text-dark border font-monospace small">Live Database Counters</span>
+                        </div>
+                        <div class="row g-3" id="categoryTelemetryRow">
+                            <!-- Populated dynamically via renderCategoryTelemetry() -->
+                        </div>
+                    </div>
+
                     <!-- 4 Live Stats Cards -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-3">
@@ -1362,9 +1375,61 @@
                 document.getElementById('statBadgesPending').innerText = `${data.badgesPending} pending`;
                 document.getElementById('statLunches').innerText = data.lunchesServedToday;
                 document.getElementById('statKits').innerText = data.kitsIssued;
+
+                if (data.categoryBreakdown) {
+                    renderCategoryTelemetry(data.categoryBreakdown);
+                }
             } catch (err) {
                 console.error("Failed to load stats", err);
             }
+        }
+
+        function renderCategoryTelemetry(breakdown) {
+            const row = document.getElementById('categoryTelemetryRow');
+            if (!row) return;
+            row.innerHTML = '';
+
+            const colorPalettes = [
+                { bg: '#2b5797', text: '#ffffff' }, // Royal Blue (Faculty)
+                { bg: '#d4b14d', text: '#ffffff' }, // Ochre Yellow (Delegate)
+                { bg: '#c44d78', text: '#ffffff' }, // Berry Pink (VIP)
+                { bg: '#a8383b', text: '#ffffff' }, // Burgundy (Workshop)
+                { bg: '#4fa8a8', text: '#ffffff' }, // Teal
+                { bg: '#5d6d7e', text: '#ffffff' }, // Dark Slate (Organizer)
+                { bg: '#008272', text: '#ffffff' }  // Emerald
+            ];
+
+            const categories = Object.keys(breakdown);
+            if (categories.length === 0) {
+                row.innerHTML = '<div class="col-12 text-muted small">No category telemetry available.</div>';
+                return;
+            }
+
+            categories.forEach((cat, idx) => {
+                const item = breakdown[cat];
+                const pal = colorPalettes[idx % colorPalettes.length];
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6';
+                col.innerHTML = `
+                    <div class="p-3 border border-dark text-white shadow-sm" 
+                         style="background-color: ${pal.bg}; color: ${pal.text}; border-radius: 0px !important;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.8rem;">${cat}</span>
+                            <a href="/api/admin/export-csv?conferenceCode=${CONFERENCE_CODE}&category=${encodeURIComponent(cat)}" 
+                               class="text-white text-decoration-none" title="Download ${cat} CSV" target="_blank">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2">
+                            <h2 class="fw-bold mb-0">${item.total}</h2>
+                            <span class="small font-monospace opacity-75" style="font-size: 0.85rem;">
+                                / B:${item.badgesPrinted} / CP:${item.certsPrinted} / CD:${item.certsDownloaded}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                row.appendChild(col);
+            });
         }
 
         async function loadDelegates(query = '') {

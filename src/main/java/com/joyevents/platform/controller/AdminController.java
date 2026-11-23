@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +96,32 @@ public class AdminController {
             recentScans = recentScans.subList(0, 10);
         }
 
+        // Group delegates by category and compute live telemetry
+        List<Delegate> allDelegates = delegateRepository.findByConference(conference);
+        Map<String, Map<String, Long>> categoryBreakdown = new LinkedHashMap<>();
+
+        for (Delegate d : allDelegates) {
+            String cat = (d.getCategory() != null && !d.getCategory().isBlank()) ? d.getCategory() : "Delegate";
+            categoryBreakdown.putIfAbsent(cat, new HashMap<>(Map.of(
+                    "total", 0L,
+                    "badgesPrinted", 0L,
+                    "certsPrinted", 0L,
+                    "certsDownloaded", 0L
+            )));
+
+            Map<String, Long> catStats = categoryBreakdown.get(cat);
+            catStats.put("total", catStats.get("total") + 1);
+            if (d.isBadgePrinted()) {
+                catStats.put("badgesPrinted", catStats.get("badgesPrinted") + 1);
+            }
+            if (d.isCertificatePrinted()) {
+                catStats.put("certsPrinted", catStats.get("certsPrinted") + 1);
+            }
+            if (d.isCertificateDownloaded()) {
+                catStats.put("certsDownloaded", catStats.get("certsDownloaded") + 1);
+            }
+        }
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("conferenceName", conference.getName());
         stats.put("totalDelegates", totalDelegates);
@@ -103,6 +130,7 @@ public class AdminController {
         stats.put("lunchesServedToday", lunchesServed);
         stats.put("kitsIssued", kitsIssued);
         stats.put("recentScans", recentScans);
+        stats.put("categoryBreakdown", categoryBreakdown);
 
         return ResponseEntity.ok(stats);
     }
@@ -193,16 +221,23 @@ public class AdminController {
     }
 
     /**
-     * 5. GET /api/admin/export-csv?conferenceCode=PHO26
+     * 5. GET /api/admin/export-csv?conferenceCode=PHO26&category=Faculty
      */
     @GetMapping("/export-csv")
     public ResponseEntity<byte[]> exportDelegatesCsv(
-            @RequestParam(defaultValue = "PHO26") String conferenceCode) {
+            @RequestParam(defaultValue = "PHO26") String conferenceCode,
+            @RequestParam(required = false) String category) {
 
         Conference conference = conferenceRepository.findByCode(conferenceCode)
                 .orElseThrow(() -> new IllegalArgumentException("Conference not found"));
 
         List<Delegate> delegates = delegateRepository.findByConferenceOrderByIdDesc(conference);
+
+        if (category != null && !category.isBlank()) {
+            delegates = delegates.stream()
+                    .filter(d -> category.equalsIgnoreCase(d.getCategory()))
+                    .toList();
+        }
 
         StringBuilder csv = new StringBuilder();
         csv.append("Reg ID,Full Name,Category,Email,Mobile,Institution,City,Badge Printed\n");
@@ -221,9 +256,13 @@ public class AdminController {
 
         byte[] csvBytes = csv.toString().getBytes();
 
+        String fileName = (category != null && !category.isBlank())
+                ? conferenceCode + "-" + category.replace(" ", "_") + "-delegates.csv"
+                : conferenceCode + "-delegates.csv";
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/csv"));
-        headers.setContentDispositionFormData("attachment", conferenceCode + "-delegates.csv");
+        headers.setContentDispositionFormData("attachment", fileName);
 
         return ResponseEntity.ok()
                 .headers(headers)
