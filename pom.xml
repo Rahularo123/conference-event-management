@@ -11,21 +11,8 @@
 	<groupId>com.joyevents</groupId>
 	<artifactId>conference-platform</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<name>conference-platform</name>
+	<description>Joy Events Conference Registration and Operations Management System</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
