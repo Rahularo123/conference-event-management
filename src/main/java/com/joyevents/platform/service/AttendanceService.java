@@ -78,6 +78,7 @@ public class AttendanceService {
         record.setAttended(newStatus);
         if (!newStatus) {
             record.setCheckInTime(null); // Reset check-in time if marked absent
+            record.setPhotoData(null);   // Clear live webcam photo when marked absent
         } else {
             record.setCheckInTime(LocalDateTime.now());
         }

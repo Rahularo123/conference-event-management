@@ -714,14 +714,17 @@
                                     </div>
                                 </div>
 
-                                <!-- Quick Badge Entry Input -->
+                                <!-- Quick Badge Entry / Exit Input -->
                                 <div class="mb-2">
                                     <label class="form-label small fw-bold">Scan Badge QR or Enter Reg ID:</label>
                                     <div class="input-group">
                                         <input type="text" id="roomScanInput" class="form-control border-dark font-monospace text-uppercase" 
-                                               placeholder="e.g. PHO26-0001" onkeypress="if(event.key==='Enter') submitRoomScan()">
-                                        <button class="btn btn-dark fw-bold" onclick="submitRoomScan()">
+                                               placeholder="e.g. PHO26-0001" onkeypress="if(event.key==='Enter') submitRoomScan('ENTRY')">
+                                        <button class="btn btn-dark fw-bold" onclick="submitRoomScan('ENTRY')">
                                             <i class="bi bi-check-lg me-1"></i> Check In
+                                        </button>
+                                        <button class="btn btn-outline-danger fw-bold" onclick="submitRoomScan('EXIT')">
+                                            <i class="bi bi-box-arrow-right me-1"></i> Leave
                                         </button>
                                     </div>
                                 </div>
@@ -1804,6 +1807,21 @@
         // ── 4x6 BADGE CALIBRATION & PRINT LOGIC ──
         let activePrintDelegateId = null;
 
+        function openCalibrateModal(regId, fullName, category) {
+            const match = currentDelegatesCache.find(d => d.registrationId === regId) || currentDelegatesCache[0];
+            if (match) {
+                openBadgeModal(match.id);
+                return;
+            }
+            activePrintDelegateId = null;
+            document.getElementById('badgeDoctorName').innerText = fullName || 'Dr. Aditya Sharma';
+            document.getElementById('badgeCategory').innerText = category || 'Faculty';
+            document.getElementById('badgeRegId').innerText = regId || 'PHO26-0001';
+            document.getElementById('badgeQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${regId || 'PHO26-0001'}`;
+            document.getElementById('btnDownloadPdfFallback').href = '#';
+            new bootstrap.Modal(document.getElementById('badgePrintModal')).show();
+        }
+
         function openBadgeModal(id) {
             const doc = currentDelegatesCache.find(d => d.id === id);
             if (!doc) return;
@@ -1991,7 +2009,7 @@
             }
         }
 
-        async function submitRoomScan() {
+        async function submitRoomScan(scanType = 'ENTRY') {
             const val = document.getElementById('roomScanInput').value.trim();
             const feedback = document.getElementById('roomScanFeedback');
             if (!val || !activeRoomId) return;
@@ -2003,7 +2021,7 @@
             try {
                 const params = new URLSearchParams();
                 params.append('qrOrRegId', val);
-                params.append('scanType', 'ENTRY');
+                params.append('scanType', scanType);
                 params.append('operatorUsername', 'desk_operator');
 
                 const res = await fetch(`/api/rooms/${activeRoomId}/scan`, {
@@ -2014,8 +2032,11 @@
 
                 const data = await res.json();
                 if (data.success) {
-                    feedback.className = 'small mt-2 p-2 bg-success-subtle text-success border border-success fw-bold';
-                    feedback.innerHTML = `✓ ${data.delegateName} (${data.registrationId}) - ${data.message}`;
+                    const isExit = scanType === 'EXIT';
+                    feedback.className = isExit
+                        ? 'small mt-2 p-2 bg-warning-subtle text-warning-emphasis border border-warning fw-bold'
+                        : 'small mt-2 p-2 bg-success-subtle text-success border border-success fw-bold';
+                    feedback.innerHTML = `${isExit ? '⇠' : '✓'} ${data.delegateName} (${data.registrationId}) - ${data.message}`;
                     
                     // Add to live feed
                     const tbody = document.getElementById('roomEntryFeedBody');
@@ -2024,9 +2045,9 @@
                     tr.innerHTML = `
                         <td class="fw-bold font-monospace">${data.registrationId}</td>
                         <td class="fw-bold">${data.delegateName}</td>
-                        <td><span class="badge bg-light text-dark border">ATTENDEE</span></td>
+                        <td><span class="badge ${isExit ? 'bg-danger-subtle text-danger border border-danger' : 'bg-success-subtle text-success border border-success'}">${isExit ? 'LEFT HALL' : 'ENTERED'}</span></td>
                         <td><small class="text-muted">${data.sessionName}</small></td>
-                        <td class="text-success fw-bold">${data.timestamp}</td>
+                        <td class="${isExit ? 'text-danger' : 'text-success'} fw-bold">${data.timestamp}</td>
                     `;
                     tbody.insertBefore(tr, tbody.firstChild);
                     refreshRoomStatus();

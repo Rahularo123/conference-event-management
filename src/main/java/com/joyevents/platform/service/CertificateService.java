@@ -76,8 +76,11 @@ public class CertificateService {
             String confCode = delegate.getConference().getCode();
             CertificateTemplate tpl = getTemplate(confCode);
 
-            // 1. Calculate verified CME credit hours from room entries
-            List<RoomEntry> roomEntries = roomEntryRepository.findByDelegateOrderByScannedAtDesc(delegate);
+            // 1. Calculate verified CME credit hours from unique ENTRY room logs (ignore EXIT scans)
+            List<RoomEntry> roomEntries = roomEntryRepository.findByDelegateOrderByScannedAtDesc(delegate)
+                    .stream()
+                    .filter(e -> !"EXIT".equalsIgnoreCase(e.getScanType()))
+                    .toList();
             int cmeSessions = roomEntries.size();
             double cmeHours = roomEntries.stream()
                     .mapToDouble(e -> (e.getRoom() != null && e.getRoom().getCmeCredits() != null) ? e.getRoom().getCmeCredits() : 1.5)

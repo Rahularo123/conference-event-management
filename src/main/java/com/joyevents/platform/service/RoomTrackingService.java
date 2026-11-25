@@ -83,12 +83,18 @@ public class RoomTrackingService {
 
     // ── 2. LIVE OCCUPANCY STATUS ──
 
+    private long computeActiveOccupancy(ConferenceRoom room, String sessionName) {
+        long entries = entryRepository.countByRoomAndSessionNameAndScanType(room, sessionName, "ENTRY");
+        long exits = entryRepository.countByRoomAndSessionNameAndScanType(room, sessionName, "EXIT");
+        return Math.max(0, entries - exits);
+    }
+
     public RoomStatus getRoomStatus(Long roomId) {
         ConferenceRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found: " + roomId));
 
         String currentSession = room.getCurrentSession() != null ? room.getCurrentSession() : "General Session";
-        long occupancy = entryRepository.countByRoomAndSessionName(room, currentSession);
+        long occupancy = computeActiveOccupancy(room, currentSession);
         int percentage = room.getCapacity() > 0 ? (int) Math.min(100, (occupancy * 100) / room.getCapacity()) : 0;
         boolean isFull = occupancy >= room.getCapacity();
 
@@ -118,27 +124,39 @@ public class RoomTrackingService {
 
         Delegate delegate = delegateOpt.get();
         String sessionName = room.getCurrentSession() != null ? room.getCurrentSession() : "General Session";
+        String normalizedType = "EXIT".equalsIgnoreCase(scanType) ? "EXIT" : "ENTRY";
 
-        // 2. Check for duplicate entry into the same lecture
-        boolean alreadyScanned = entryRepository.existsByRoomAndDelegateAndSessionName(room, delegate, sessionName);
+        // 2. Determine whether delegate is currently inside this session
+        Optional<RoomEntry> latestOpt = entryRepository.findTopByRoomAndDelegateAndSessionNameOrderByScannedAtDesc(room, delegate, sessionName);
+        boolean currentlyInside = latestOpt.isPresent() && !"EXIT".equalsIgnoreCase(latestOpt.get().getScanType());
+        long currentCount = computeActiveOccupancy(room, sessionName);
 
-        // 3. Current Headcount check
-        long currentCount = entryRepository.countByRoomAndSessionName(room, sessionName);
-        if (currentCount >= room.getCapacity() && !alreadyScanned) {
+        if ("EXIT".equals(normalizedType)) {
+            if (!currentlyInside) {
+                return new RoomScanResult(false, "NOT INSIDE HALL: Attendee is not checked in or has already left.",
+                        delegate.getFullName(), delegate.getRegistrationId(), room.getName(), sessionName, currentCount, room.getCapacity(), now());
+            }
+            entryRepository.save(new RoomEntry(room, delegate, sessionName, "EXIT", operatorUsername));
+            currentCount = Math.max(0, currentCount - 1);
+            return new RoomScanResult(true, "EXIT RECORDED: Attendee left hall",
+                    delegate.getFullName(), delegate.getRegistrationId(), room.getName(), sessionName, currentCount, room.getCapacity(), now());
+        }
+
+        // ENTRY flow
+        if (currentlyInside) {
+            return new RoomScanResult(true, "RE-ENTRY VERIFIED: Already checked into this session",
+                    delegate.getFullName(), delegate.getRegistrationId(), room.getName(), sessionName, currentCount, room.getCapacity(), now());
+        }
+
+        if (currentCount >= room.getCapacity()) {
             return new RoomScanResult(false, "HALL FULL: Seating capacity of " + room.getCapacity() + " reached!", 
                     delegate.getFullName(), delegate.getRegistrationId(), room.getName(), sessionName, currentCount, room.getCapacity(), now());
         }
 
-        // 4. Record new entry log
-        if (!alreadyScanned) {
-            RoomEntry entry = new RoomEntry(room, delegate, sessionName, scanType != null ? scanType : "ENTRY", operatorUsername);
-            entryRepository.save(entry);
-            currentCount++;
-        }
+        entryRepository.save(new RoomEntry(room, delegate, sessionName, "ENTRY", operatorUsername));
+        currentCount++;
 
-        String statusMsg = alreadyScanned ? "RE-ENTRY VERIFIED: Already logged for this session" : "ENTRY APPROVED: CME presence recorded";
-
-        return new RoomScanResult(true, statusMsg, delegate.getFullName(), delegate.getRegistrationId(), 
+        return new RoomScanResult(true, "ENTRY APPROVED: CME presence recorded", delegate.getFullName(), delegate.getRegistrationId(), 
                 room.getName(), sessionName, currentCount, room.getCapacity(), now());
     }
 

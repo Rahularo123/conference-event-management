@@ -9,14 +9,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoomEntryRepository extends JpaRepository<RoomEntry, Long> {
 
-    // 1. Live Headcount: Counts how many doctors entered this hall for the current lecture
+    // 1. Live Headcount: Counts ENTRY vs EXIT scans for this hall and lecture
     long countByRoomAndSessionName(ConferenceRoom room, String sessionName);
 
-    // 2. Check if a doctor has already checked into this specific lecture
+    long countByRoomAndSessionNameAndScanType(ConferenceRoom room, String sessionName, String scanType);
+
+    // 2. Check latest door scan state (ENTRY vs EXIT) for a delegate in this lecture
+    Optional<RoomEntry> findTopByRoomAndDelegateAndSessionNameOrderByScannedAtDesc(ConferenceRoom room, Delegate delegate, String sessionName);
+
     boolean existsByRoomAndDelegateAndSessionName(ConferenceRoom room, Delegate delegate, String sessionName);
 
     // 3. CME Audit Trail: Fetch all scientific sessions attended by a specific doctor
